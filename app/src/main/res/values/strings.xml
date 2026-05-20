@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">EcoTrip - Tiket Wisata</string>
+    <string name="welcome_to_ecotrip">Selamat Datang di EcoTrip</string>
+    <string name="wisata_katalog">Katalog Wisata Alam</string>
+    <string name="pesan_sekarang">Pesan Sekarang</string>
+    <string name="form_booking">Form Booking Tiket</string>
+    <string name="nama_pemesan">Nama Pemesan</string>
+    <string name="nik_paspor">NIK / No. Paspor</string>
+    <string name="tanggal_booking">Tanggal Booking</string>
+    <string name="jumlah_tiket">Jumlah Tiket</string>
+    <string name="pilih_pintu_masuk">Pilih Pintu Masuk</string>
+    <string name="kategori_wisatawan">Kategori Wisatawan</string>
+    <string name="domestik">Domestik (Rp35.000)</string>
+    <string name="mancanegara">Mancanegara (Rp220.000)</string>
+    <string name="fasilitas_tambahan">Fasilitas Tambahan</string>
+    <string name="sewa_jeep">Sewa Jeep Bromo (+600.000)</string>
+    <string name="camping">Camping Ranu Kumbolo (+50.000)</string>
+    <string name="jasa_porter">Jasa Porter (+250.000)</string>
+    <string name="hitung_total">Hitung Total</string>
+    <string name="booking_sekarang">Booking Sekarang</string>
+    <string name="total_bayar">Total Bayar: </string>
+    <string name="riwayat_booking">Riwayat Booking</string>
+    <string name="edit_jadwal">Edit Jadwal</string>
+    <string name="batalkan_booking">Batalkan Booking</string>
+    <string name="konfirmasi_hapus">Apakah Anda yakin ingin membatalkan booking ini?</string>
+</resources>
