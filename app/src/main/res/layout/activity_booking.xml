@@ -20,6 +20,16 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
+        <TextView
+            android:id="@+id/tv_nama_wisata"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Destinasi: -"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -104,14 +114,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/domestik"
+                android:text="Domestik"
                 android:checked="true" />
             <RadioButton
                 android:id="@+id/rb_mancanegara"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/mancanegara" />
+                android:text="Mancanegara" />
         </RadioGroup>
 
         <TextView

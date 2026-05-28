@@ -28,6 +28,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".BookingActivity" />
         <activity android:name=".HistoryActivity" />
+        <activity android:name=".TiketMasukActivity" />
     </application>
 
 </manifest>

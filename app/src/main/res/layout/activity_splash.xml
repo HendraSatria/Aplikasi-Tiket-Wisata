@@ -1,43 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
+
+    <!-- Background Image -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gradient_green" />
+
+    <!-- Overlay to make text/logo pop -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#75000000" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="252dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:orientation="vertical">
 
-        <!-- Logo placeholder with a green circle -->
-        <View
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:background="@drawable/circle_green" />
+        <!-- Circular Logo -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_logo_splash"
+            android:layout_width="206dp"
+            android:layout_height="207dp"
+            android:padding="2dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_utama"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
+            app:strokeColor="@color/white"
+            app:strokeWidth="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="EcoTrip"
-            android:textColor="@color/nature_green"
-            android:textSize="28sp"
+            android:layout_marginTop="24dp"
+            android:letterSpacing="0.1"
+            android:text="ECOTRIP"
+            android:textColor="@color/white"
+            android:textSize="32sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tiket Wisata Taman Nasional"
-            android:textColor="@color/gray_dark"
-            android:textSize="14sp" />
+            android:alpha="0.9"
+            android:text="@string/tagline_splash"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <ProgressBar
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="32dp"
-            android:indeterminateTint="@color/nature_green" />
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="40dp"
+            android:indeterminateTint="@color/white" />
 
     </LinearLayout>
 

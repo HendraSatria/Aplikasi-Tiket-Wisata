@@ -1,59 +1,56 @@
 package com.example.ecotrip_tiketwisatatamannasional;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
-import com.example.ecotrip_tiketwisatatamannasional.adapter.WisataAdapter;
-import com.example.ecotrip_tiketwisatatamannasional.model.Wisata;
-import com.google.android.material.button.MaterialButton;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.ecotrip_tiketwisatatamannasional.fragment.HomeFragment;
+import com.example.ecotrip_tiketwisatatamannasional.fragment.ProfileFragment;
+import com.example.ecotrip_tiketwisatatamannasional.fragment.TransaksiFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
-
-    private RecyclerView rvWisata;
-    private WisataAdapter adapter;
-    private List<Wisata> wisataList;
-    private MaterialButton btnHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rvWisata = findViewById(R.id.rv_wisata);
-        btnHistory = findViewById(R.id.btn_history);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+            int id = item.getItemId();
 
-        // Inisialisasi data wisata
-        wisataList = new ArrayList<>();
-        wisataList.add(new Wisata("Gunung Bromo - Paket Sunrise", "Probolinggo, Jawa Timur", 35000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Ranu Kumbolo - Camping 2D1N", "Lumajang, Jawa Timur", 35000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Kawah Ijen - Blue Fire Tour", "Banyuwangi, Jawa Timur", 35000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Tumpak Sewu Waterfall", "Lumajang, Jawa Timur", 20000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Pantai Papuma", "Jember, Jawa Timur", 15000, android.R.drawable.ic_menu_gallery));
-
-        // Setup RecyclerView
-        adapter = new WisataAdapter(wisataList, this, new WisataAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Wisata wisata) {
-                Intent intent = new Intent(MainActivity.this, BookingActivity.class);
-                intent.putExtra("DATA_WISATA", wisata);
-                startActivity(intent);
+            if (id == R.id.nav_home) {
+                selectedFragment = new HomeFragment();
+            } else if (id == R.id.nav_transaksi) {
+                selectedFragment = new TransaksiFragment();
+            } else if (id == R.id.nav_profile) {
+                selectedFragment = new ProfileFragment();
             }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, selectedFragment)
+                        .commit();
+            }
+            return true;
         });
 
-        rvWisata.setLayoutManager(new LinearLayoutManager(this));
-        rvWisata.setAdapter(adapter);
-
-        // Tombol Riwayat
-        btnHistory.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-            startActivity(intent);
-        });
+        // Set default fragment
+        if (savedInstanceState == null) {
+            String target = getIntent().getStringExtra("TARGET_FRAGMENT");
+            if ("TRANSAKSI".equals(target)) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new TransaksiFragment())
+                        .commit();
+                bottomNav.setSelectedItemId(R.id.nav_transaksi);
+            } else {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new HomeFragment())
+                        .commit();
+            }
+        }
     }
 }

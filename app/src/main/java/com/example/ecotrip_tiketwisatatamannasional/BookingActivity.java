@@ -37,12 +37,12 @@ public class BookingActivity extends AppCompatActivity {
     private RadioGroup rgWisatawan;
     private RadioButton rbDomestik, rbMancanegara;
     private CheckBox cbJeep, cbCamping, cbPorter;
-    private TextView tvTotal;
+    private TextView tvTotal, tvNamaWisata;
     private MaterialButton btnHitung, btnBooking;
 
     private Wisata wisata;
     private double totalBayar = 0;
-    private String URL_INSERT = "http://192.168.1.11/ecotrip/insert_booking.php"; // IP server lokal agar bisa diakses HP
+    private String URL_INSERT = "http://192.168.1.11/ecotrip/insert_booking.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +62,21 @@ public class BookingActivity extends AppCompatActivity {
         cbCamping = findViewById(R.id.cb_camping);
         cbPorter = findViewById(R.id.cb_porter);
         tvTotal = findViewById(R.id.tv_total_bayar);
+        tvNamaWisata = findViewById(R.id.tv_nama_wisata);
         btnHitung = findViewById(R.id.btn_hitung);
         btnBooking = findViewById(R.id.btn_booking);
 
         // Get data wisata from Intent
         wisata = (Wisata) getIntent().getSerializableExtra("DATA_WISATA");
+        if (wisata != null) {
+            tvNamaWisata.setText("Destinasi: " + wisata.getNama());
+            // Update UI hints based on selected wisata price
+            rbDomestik.setText("Domestik (Rp" + String.format("%,d", wisata.getHarga()).replace(',', '.') + ")");
+            rbMancanegara.setText("Mancanegara (Rp" + String.format("%,d", wisata.getHarga() * 5).replace(',', '.') + ")");
+        }
 
         // Setup Spinner
-        String[] pintuMasuk = {"Cemoro Lawang", "Tosari", "Ngadas"};
+        String[] pintuMasuk = {"Pintu Utama", "Jalur Pendakian A", "Jalur Pendakian B"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, pintuMasuk);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPintu.setAdapter(adapter);
@@ -99,7 +106,8 @@ public class BookingActivity extends AppCompatActivity {
         }
 
         int jumlah = Integer.parseInt(etJumlah.getText().toString());
-        long hargaWisatawan = rbDomestik.isChecked() ? 35000 : 220000;
+        long hargaBase = (wisata != null) ? wisata.getHarga() : 0;
+        long hargaWisatawan = rbDomestik.isChecked() ? hargaBase : (hargaBase * 5);
         
         long tambahan = 0;
         if (cbJeep.isChecked()) tambahan += 600000;
@@ -129,7 +137,9 @@ public class BookingActivity extends AppCompatActivity {
                 response -> {
                     progressDialog.dismiss();
                     Toast.makeText(BookingActivity.this, "Booking Berhasil!", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(BookingActivity.this, HistoryActivity.class);
+                    Intent intent = new Intent(BookingActivity.this, MainActivity.class);
+                    intent.putExtra("TARGET_FRAGMENT", "TRANSAKSI");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                     finish();
                 },

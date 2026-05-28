@@ -23,4 +23,9 @@
     <string name="edit_jadwal">Edit Jadwal</string>
     <string name="batalkan_booking">Batalkan Booking</string>
     <string name="konfirmasi_hapus">Apakah Anda yakin ingin membatalkan booking ini?</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_transaksi">Transaksi</string>
+    <string name="menu_profile">Profile</string>
+    <string name="destinasi_terpopuler">Destinasi Terpopuler</string>
+    <string name="tagline_splash">APLIKASI TIKET PENDAKIAN</string>
 </resources>
