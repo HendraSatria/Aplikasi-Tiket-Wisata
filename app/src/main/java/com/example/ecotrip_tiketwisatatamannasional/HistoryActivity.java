@@ -3,19 +3,22 @@ package com.example.ecotrip_tiketwisatatamannasional;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ecotrip_tiketwisatatamannasional.adapter.BookingAdapter;
 import com.example.ecotrip_tiketwisatatamannasional.model.Booking;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,9 +38,20 @@ public class HistoryActivity extends AppCompatActivity {
     private BookingAdapter adapter;
     private List<Booking> bookingList;
 
-    private String URL_TAMPIL = "http://192.168.1.11/ecotrip/tampil_booking.php";
-    private String URL_UPDATE = "http://192.168.1.11/ecotrip/update_booking.php";
-    private String URL_DELETE = "http://192.168.1.11/ecotrip/delete_booking.php";
+    private String URL_TAMPIL = "http://192.168.1.9/ecotrip/tampil_booking.php";
+    private String URL_UPDATE = "http://192.168.1.9/ecotrip/update_booking.php";
+    private String URL_DELETE = "http://192.168.1.9/ecotrip/delete_booking.php";
+
+    private Booking currentPayingBooking;
+
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if(result.getContents() == null) {
+                    Toast.makeText(this, "Scan dibatalkan", Toast.LENGTH_LONG).show();
+                } else {
+                    handlePaymentSuccess(result.getContents());
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +87,8 @@ public class HistoryActivity extends AppCompatActivity {
                                     obj.getString("kategori_turis"),
                                     obj.getInt("jumlah_tiket"),
                                     obj.getString("fasilitas"),
-                                    obj.getDouble("total_bayar")
+                                    obj.getDouble("total_bayar"),
+                                    obj.optString("basecamp", "-")
                             ));
                         }
                         adapter = new BookingAdapter(bookingList, new BookingAdapter.OnActionClickListener() {
@@ -85,6 +100,11 @@ public class HistoryActivity extends AppCompatActivity {
                             @Override
                             public void onDelete(Booking booking) {
                                 showDeleteConfirmDialog(booking);
+                            }
+
+                            @Override
+                            public void onPay(Booking booking) {
+                                startPayment(booking);
                             }
                         });
                         rvHistory.setAdapter(adapter);
@@ -98,6 +118,40 @@ public class HistoryActivity extends AppCompatActivity {
                 });
 
         Volley.newRequestQueue(this).add(stringRequest);
+    }
+
+    private void startPayment(Booking booking) {
+        currentPayingBooking = booking;
+        String total = String.format("%,.0f", booking.getTotalBayar()).replace(',', '.');
+        
+        new AlertDialog.Builder(this)
+                .setTitle("Bayar Izin")
+                .setMessage("Lanjutkan pembayaran izin untuk " + booking.getDestinasi() + "\nNominal: Rp" + total)
+                .setPositiveButton("Scan Barcode/QR", (dialog, which) -> {
+                    ScanOptions options = new ScanOptions();
+                    options.setPrompt("Scan Barcode Pembayaran");
+                    options.setBeepEnabled(true);
+                    options.setOrientationLocked(true);
+                    options.setCaptureActivity(CustomScannerActivity.class);
+                    barcodeLauncher.launch(options);
+                })
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+
+    private void handlePaymentSuccess(String scanData) {
+        if (currentPayingBooking != null) {
+            String total = String.format("%,.0f", currentPayingBooking.getTotalBayar()).replace(',', '.');
+            new AlertDialog.Builder(this)
+                    .setTitle("Konfirmasi Pembayaran")
+                    .setMessage("Scan Berhasil!\nData: " + scanData + "\n\nNominal Rp" + total + " akan dibayarkan.")
+                    .setPositiveButton("Bayar Sekarang", (dialog, which) -> {
+                        Toast.makeText(this, "Pembayaran Berhasil untuk " + currentPayingBooking.getDestinasi(), Toast.LENGTH_LONG).show();
+                        // Di sini bisa ditambahkan update status bayar ke database
+                    })
+                    .setNegativeButton("Batal", null)
+                    .show();
+        }
     }
 
     private void showEditDateDialog(Booking booking) {
@@ -114,7 +168,7 @@ public class HistoryActivity extends AppCompatActivity {
     private void updateJadwal(String id, String tgl) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_UPDATE,
                 response -> {
-                    Toast.makeText(this, "Jadwal diperbarui", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Jadwal izin diperbarui", Toast.LENGTH_SHORT).show();
                     ambilData();
                 },
                 error -> Toast.makeText(this, "Gagal update: " + error.getMessage(), Toast.LENGTH_SHORT).show()) {
@@ -131,8 +185,8 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void showDeleteConfirmDialog(Booking booking) {
         new AlertDialog.Builder(this)
-                .setTitle("Konfirmasi")
-                .setMessage(getString(R.string.konfirmasi_hapus))
+                .setTitle("Batalkan Izin")
+                .setMessage("Apakah Anda yakin ingin membatalkan izin ini?")
                 .setPositiveButton("Ya, Batalkan", (dialog, which) -> deleteBooking(booking.getIdBooking()))
                 .setNegativeButton("Tidak", null)
                 .show();
@@ -141,7 +195,7 @@ public class HistoryActivity extends AppCompatActivity {
     private void deleteBooking(String id) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_DELETE,
                 response -> {
-                    Toast.makeText(this, "Booking dibatalkan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Izin dibatalkan", Toast.LENGTH_SHORT).show();
                     ambilData();
                 },
                 error -> Toast.makeText(this, "Gagal hapus: " + error.getMessage(), Toast.LENGTH_SHORT).show()) {

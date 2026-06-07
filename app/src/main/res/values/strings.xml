@@ -22,6 +22,7 @@
     <string name="riwayat_booking">Riwayat Izin Mendaki</string>
     <string name="edit_jadwal">Ubah Jadwal</string>
     <string name="batalkan_booking">Batalkan Izin</string>
+    <string name="bayar_izin">Bayar Izin</string>
     <string name="konfirmasi_hapus">Apakah Anda yakin ingin membatalkan pendaftaran ini?</string>
     <string name="menu_home">Beranda</string>
     <string name="menu_transaksi">Riwayat</string>

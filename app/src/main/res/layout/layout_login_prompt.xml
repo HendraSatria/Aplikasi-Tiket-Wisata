@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo_utama"
+        android:alpha="0.5"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Akses Terbatas"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/nature_green_dark"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Silakan masuk untuk melihat riwayat pesanan Anda."
+        android:textSize="14sp"
+        android:textColor="@color/gray_dark"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_login_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Daftar / Masuk Sekarang"
+        android:backgroundTint="@color/nature_green"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:cornerRadius="8dp" />
+
+</LinearLayout>

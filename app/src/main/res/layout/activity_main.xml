@@ -17,8 +17,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
+        android:elevation="8dp"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/nature_green"
-        app:itemTextColor="@color/nature_green" />
+        app:itemIconTint="@color/bnv_tab_item_color"
+        app:itemTextColor="@color/bnv_tab_item_color"
+        app:labelVisibilityMode="labeled"
+        app:itemIconSize="24dp" />
 
 </RelativeLayout>

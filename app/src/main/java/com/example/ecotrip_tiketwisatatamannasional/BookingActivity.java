@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -38,6 +39,7 @@ public class BookingActivity extends AppCompatActivity {
     private RadioButton rbDomestik, rbMancanegara;
     private CheckBox cbJeep, cbCamping, cbPorter;
     private TextView tvTotal, tvNamaWisata;
+    private ImageView ivGunung;
     private MaterialButton btnHitung, btnBooking;
 
     private Wisata wisata;
@@ -62,13 +64,15 @@ public class BookingActivity extends AppCompatActivity {
         cbPorter = findViewById(R.id.cb_porter);
         tvTotal = findViewById(R.id.tv_total_bayar);
         tvNamaWisata = findViewById(R.id.tv_nama_wisata);
+        ivGunung = findViewById(R.id.iv_gunung_booking);
         btnHitung = findViewById(R.id.btn_hitung);
         btnBooking = findViewById(R.id.btn_booking);
 
         // Get data wisata from Intent
         wisata = (Wisata) getIntent().getSerializableExtra("DATA_WISATA");
         if (wisata != null) {
-            tvNamaWisata.setText("Gunung: " + wisata.getNama());
+            tvNamaWisata.setText(wisata.getNama());
+            ivGunung.setImageResource(wisata.getGambarResId());
             // Update UI hints based on selected wisata price
             rbDomestik.setText("Domestik (Rp" + String.format("%,d", wisata.getHarga()).replace(',', '.') + ")");
             rbMancanegara.setText("Mancanegara (Rp" + String.format("%,d", wisata.getHarga() * 5).replace(',', '.') + ")");
@@ -186,7 +190,7 @@ public class BookingActivity extends AppCompatActivity {
                 if (cbCamping.isChecked()) fasilitas += "Camping, ";
                 if (cbPorter.isChecked()) fasilitas += "Jasa Porter, ";
                 params.put("fasilitas", fasilitas);
-                
+                params.put("basecamp", spinnerPintu.getSelectedItem().toString()); // Added
                 params.put("total_bayar", String.valueOf(totalBayar));
                 return params;
             }

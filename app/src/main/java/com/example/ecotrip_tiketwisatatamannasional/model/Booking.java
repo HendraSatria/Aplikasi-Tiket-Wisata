@@ -10,8 +10,9 @@ public class Booking {
     private int jumlahTiket;
     private String fasilitas;
     private double totalBayar;
+    private String basecamp; // Added field
 
-    public Booking(String idBooking, String namaPemesan, String nik, String destinasi, String tanggal, String kategoriTuris, int jumlahTiket, String fasilitas, double totalBayar) {
+    public Booking(String idBooking, String namaPemesan, String nik, String destinasi, String tanggal, String kategoriTuris, int jumlahTiket, String fasilitas, double totalBayar, String basecamp) {
         this.idBooking = idBooking;
         this.namaPemesan = namaPemesan;
         this.nik = nik;
@@ -21,6 +22,7 @@ public class Booking {
         this.jumlahTiket = jumlahTiket;
         this.fasilitas = fasilitas;
         this.totalBayar = totalBayar;
+        this.basecamp = basecamp;
     }
 
     public String getIdBooking() { return idBooking; }
@@ -31,5 +33,7 @@ public class Booking {
     public String getKategoriTuris() { return kategoriTuris; }
     public int getJumlahTiket() { return jumlahTiket; }
     public String getFasilitas() { return fasilitas; }
+    public double totalBayar() { return totalBayar; } // keeping original name or getter
     public double getTotalBayar() { return totalBayar; }
+    public String getBasecamp() { return basecamp; }
 }

@@ -3,6 +3,9 @@ package com.example.ecotrip_tiketwisatatamannasional.fragment;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,9 +24,12 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ecotrip_tiketwisatatamannasional.ApiConfig;
+import com.example.ecotrip_tiketwisatatamannasional.CustomScannerActivity;
 import com.example.ecotrip_tiketwisatatamannasional.R;
 import com.example.ecotrip_tiketwisatatamannasional.adapter.BookingAdapter;
 import com.example.ecotrip_tiketwisatatamannasional.model.Booking;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,9 +52,33 @@ public class TransaksiFragment extends Fragment {
     private View emptyState;
     private com.google.android.material.textfield.TextInputEditText etSearch;
 
+    private Booking currentPayingBooking;
+
+    private final androidx.activity.result.ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if(result.getContents() == null) {
+                    Toast.makeText(getContext(), "Scan dibatalkan", Toast.LENGTH_LONG).show();
+                } else {
+                    handlePaymentSuccess(result.getContents());
+                }
+            });
+
+    private boolean isUserLoggedIn() {
+        SharedPreferences pref = requireActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        return pref.getBoolean("isLoggedIn", false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (!isUserLoggedIn()) {
+            View loginPrompt = inflater.inflate(R.layout.layout_login_prompt, container, false);
+            loginPrompt.findViewById(R.id.btn_login_prompt).setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.example.ecotrip_tiketwisatatamannasional.LoginActivity.class));
+            });
+            return loginPrompt;
+        }
+
         View view = inflater.inflate(R.layout.fragment_transaksi, container, false);
 
         rvHistory = view.findViewById(R.id.rv_history);
@@ -100,7 +130,8 @@ public class TransaksiFragment extends Fragment {
                                     obj.getString("kategori_turis"),
                                     obj.getInt("jumlah_tiket"),
                                     obj.getString("fasilitas"),
-                                    obj.getDouble("total_bayar")
+                                    obj.getDouble("total_bayar"),
+                                    obj.optString("basecamp", "-")
                             ));
                         }
                         
@@ -160,6 +191,11 @@ public class TransaksiFragment extends Fragment {
                 public void onDelete(Booking booking) {
                     showDeleteConfirmDialog(booking);
                 }
+
+                @Override
+                public void onPay(Booking booking) {
+                    startPayment(booking);
+                }
             });
             rvHistory.setAdapter(adapter);
         }
@@ -196,10 +232,44 @@ public class TransaksiFragment extends Fragment {
         Volley.newRequestQueue(getContext()).add(stringRequest);
     }
 
+    private void startPayment(Booking booking) {
+        currentPayingBooking = booking;
+        String total = String.format("%,.0f", booking.getTotalBayar()).replace(',', '.');
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Bayar Izin")
+                .setMessage("Lanjutkan pembayaran izin untuk " + booking.getDestinasi() + "\nNominal: Rp" + total)
+                .setPositiveButton("Scan Barcode/QR", (dialog, which) -> {
+                    ScanOptions options = new ScanOptions();
+                    options.setPrompt("Scan Barcode Pembayaran");
+                    options.setBeepEnabled(true);
+                    options.setOrientationLocked(true);
+                    options.setCaptureActivity(CustomScannerActivity.class);
+                    barcodeLauncher.launch(options);
+                })
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+
+    private void handlePaymentSuccess(String scanData) {
+        if (currentPayingBooking != null) {
+            String total = String.format("%,.0f", currentPayingBooking.getTotalBayar()).replace(',', '.');
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Konfirmasi Pembayaran")
+                    .setMessage("Scan Berhasil!\nData: " + scanData + "\n\nNominal Rp" + total + " akan dibayarkan.")
+                    .setPositiveButton("Bayar Sekarang", (dialog, which) -> {
+                        Toast.makeText(getContext(), "Pembayaran Berhasil untuk " + currentPayingBooking.getDestinasi(), Toast.LENGTH_LONG).show();
+                        // Di sini bisa ditambahkan update status bayar ke database
+                    })
+                    .setNegativeButton("Batal", null)
+                    .show();
+        }
+    }
+
     private void showDeleteConfirmDialog(Booking booking) {
         new AlertDialog.Builder(getContext())
-                .setTitle("Batalkan Pesanan")
-                .setMessage("Apakah Anda yakin ingin membatalkan pesanan tiket ke " + booking.getDestinasi() + "?")
+                .setTitle("Batalkan Izin")
+                .setMessage("Apakah Anda yakin ingin membatalkan izin mendaki ke " + booking.getDestinasi() + "?")
                 .setPositiveButton("Ya, Batalkan", (dialog, which) -> deleteBooking(booking.getIdBooking()))
                 .setNegativeButton("Tidak", null)
                 .show();
@@ -208,7 +278,7 @@ public class TransaksiFragment extends Fragment {
     private void deleteBooking(String id) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ApiConfig.URL_DELETE,
                 response -> {
-                    Toast.makeText(getContext(), "Pesanan berhasil dibatalkan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Izin berhasil dibatalkan", Toast.LENGTH_SHORT).show();
                     ambilData();
                 },
                 error -> Toast.makeText(getContext(), "Gagal menghapus", Toast.LENGTH_SHORT).show()) {
