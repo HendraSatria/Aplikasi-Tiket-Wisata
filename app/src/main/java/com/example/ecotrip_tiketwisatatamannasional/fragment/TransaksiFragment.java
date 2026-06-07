@@ -89,8 +89,8 @@ public class TransaksiFragment extends Fragment {
                     try {
                         JSONArray array = new JSONArray(response);
                         bookingList.clear();
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject obj = array.getJSONObject(i);
+                        for (int j = 0; j < array.length(); j++) {
+                            JSONObject obj = array.getJSONObject(j);
                             bookingList.add(new Booking(
                                     obj.getString("id_booking"),
                                     obj.getString("nama_pemesan"),

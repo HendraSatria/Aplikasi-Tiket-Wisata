@@ -83,14 +83,14 @@ public class HomeFragment extends Fragment {
         // Mengambil parent (GridLayout) untuk memberi listener ke tiap menu
         ViewGroup menuGrid = (ViewGroup) view.findViewById(R.id.menu_tiket_masuk).getParent();
         
-        for (int i = 0; i < menuGrid.getChildCount(); i++) {
-            View menu = menuGrid.getChildAt(i);
-            final int index = i;
+        for (int indexMenu = 0; indexMenu < menuGrid.getChildCount(); indexMenu++) {
+            View menu = menuGrid.getChildAt(indexMenu);
+            final int currentIndex = indexMenu;
             
             if (menu.getId() == R.id.menu_tiket_masuk) continue;
 
             menu.setOnClickListener(v -> {
-                switch (index) {
+                switch (currentIndex) {
                     case 1: // Travel & Ojek
                         showInfoDialog("Travel & Ojek", "Layanan antar jemput basecamp dan ojek pendakian tersedia di lokasi. Hubungi pos perizinan setempat untuk pemesanan.");
                         break;

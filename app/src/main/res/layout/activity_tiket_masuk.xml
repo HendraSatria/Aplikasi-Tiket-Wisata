@@ -27,7 +27,7 @@
             android:id="@+id/et_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Cari Gunung atau Jalur..."
+            android:hint="@string/cari_gunung_jalur"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 

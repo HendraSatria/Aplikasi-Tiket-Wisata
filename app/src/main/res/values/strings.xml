@@ -28,4 +28,9 @@
     <string name="menu_profile">Profil</string>
     <string name="destinasi_terpopuler">Gunung Terfavorit</string>
     <string name="tagline_splash">SISTEM INFORMASI PENDAKIAN GUNUNG</string>
+    <string name="cari_destinasi_pendaki">Cari Destinasi atau Pendaki...</string>
+    <string name="cari_gunung_jalur">Cari Gunung atau Jalur...</string>
+    <string name="point_pendaki">Point Pendaki</string>
+    <string name="point_desc">Dapatkan diskon dengan merawat ekosistem di area pendakian</string>
+    <string name="promo_mendaki">Promo Meriah Mendaki Lebih Hemat</string>
 </resources>

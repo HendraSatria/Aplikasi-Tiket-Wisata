@@ -103,14 +103,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Point Pendaki"
+                        android:text="@string/point_pendaki"
                         android:textColor="@color/gray_dark"
                         android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Dapatkan diskon dengan merawat ekosistem di area pendakian"
+                        android:text="@string/point_desc"
                         android:textColor="@color/nature_green_dark"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -349,7 +349,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Promo Meriah Mendaki Lebih Hemat"
+            android:text="@string/promo_mendaki"
             android:textColor="#333333"
             android:textSize="15sp"
             android:textStyle="bold" />
