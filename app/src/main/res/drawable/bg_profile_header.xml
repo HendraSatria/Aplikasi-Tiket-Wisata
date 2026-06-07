@@ -3,7 +3,11 @@
     <!-- Curved Background -->
     <item>
         <shape>
-            <solid android:color="@color/nature_green_dark" />
+            <gradient
+                android:angle="135"
+                android:endColor="@color/nature_green_dark"
+                android:startColor="@color/nature_green"
+                android:type="linear" />
             <corners
                 android:bottomLeftRadius="40dp"
                 android:bottomRightRadius="40dp" />

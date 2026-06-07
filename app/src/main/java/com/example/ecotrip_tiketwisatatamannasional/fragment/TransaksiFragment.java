@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -63,22 +62,9 @@ public class TransaksiFragment extends Fragment {
                 }
             });
 
-    private boolean isUserLoggedIn() {
-        SharedPreferences pref = requireActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
-        return pref.getBoolean("isLoggedIn", false);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (!isUserLoggedIn()) {
-            View loginPrompt = inflater.inflate(R.layout.layout_login_prompt, container, false);
-            loginPrompt.findViewById(R.id.btn_login_prompt).setOnClickListener(v -> {
-                startActivity(new Intent(getActivity(), com.example.ecotrip_tiketwisatatamannasional.LoginActivity.class));
-            });
-            return loginPrompt;
-        }
-
         View view = inflater.inflate(R.layout.fragment_transaksi, container, false);
 
         rvHistory = view.findViewById(R.id.rv_history);

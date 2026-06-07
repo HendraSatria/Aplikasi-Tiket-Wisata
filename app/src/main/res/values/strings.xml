@@ -19,13 +19,13 @@
     <string name="hitung_total">Cek Estimasi Biaya</string>
     <string name="booking_sekarang">Daftar Pendakian Sekarang</string>
     <string name="total_bayar">Total Biaya: </string>
-    <string name="riwayat_booking">Riwayat Izin Mendaki</string>
+    <string name="riwayat_booking">Transaksi Izin Mendaki</string>
     <string name="edit_jadwal">Ubah Jadwal</string>
     <string name="batalkan_booking">Batalkan Izin</string>
     <string name="bayar_izin">Bayar Izin</string>
     <string name="konfirmasi_hapus">Apakah Anda yakin ingin membatalkan pendaftaran ini?</string>
     <string name="menu_home">Beranda</string>
-    <string name="menu_transaksi">Riwayat</string>
+    <string name="menu_transaksi">Transaksi</string>
     <string name="menu_profile">Profil</string>
     <string name="destinasi_terpopuler">Gunung Terfavorit</string>
     <string name="tagline_splash">SISTEM INFORMASI PENDAKIAN GUNUNG</string>

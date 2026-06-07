@@ -11,7 +11,16 @@ import com.example.ecotrip_tiketwisatatamannasional.fragment.ProfileFragment;
 import com.example.ecotrip_tiketwisatatamannasional.fragment.TransaksiFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+
 public class MainActivity extends AppCompatActivity {
+
+    private boolean isUserLoggedIn() {
+        SharedPreferences pref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        return pref.getBoolean("isLoggedIn", false);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +39,20 @@ public class MainActivity extends AppCompatActivity {
 
             if (id == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
-            } else if (id == R.id.nav_transaksi) {
-                selectedFragment = new TransaksiFragment();
-            } else if (id == R.id.nav_chat) {
-                selectedFragment = new ChatFragment();
-            } else if (id == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
+            } else {
+                // Untuk menu selain Home, cek login
+                if (!isUserLoggedIn()) {
+                    startActivity(new Intent(this, LoginActivity.class));
+                    return false;
+                }
+                
+                if (id == R.id.nav_transaksi) {
+                    selectedFragment = new TransaksiFragment();
+                } else if (id == R.id.nav_chat) {
+                    selectedFragment = new ChatFragment();
+                } else if (id == R.id.nav_profile) {
+                    selectedFragment = new ProfileFragment();
+                }
             }
 
             if (selectedFragment != null) {
