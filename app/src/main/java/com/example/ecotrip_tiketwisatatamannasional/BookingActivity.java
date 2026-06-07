@@ -42,7 +42,6 @@ public class BookingActivity extends AppCompatActivity {
 
     private Wisata wisata;
     private double totalBayar = 0;
-    private String URL_INSERT = "http://192.168.1.11/ecotrip/insert_booking.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,7 @@ public class BookingActivity extends AppCompatActivity {
         // Get data wisata from Intent
         wisata = (Wisata) getIntent().getSerializableExtra("DATA_WISATA");
         if (wisata != null) {
-            tvNamaWisata.setText("Destinasi: " + wisata.getNama());
+            tvNamaWisata.setText("Gunung: " + wisata.getNama());
             // Update UI hints based on selected wisata price
             rbDomestik.setText("Domestik (Rp" + String.format("%,d", wisata.getHarga()).replace(',', '.') + ")");
             rbMancanegara.setText("Mancanegara (Rp" + String.format("%,d", wisata.getHarga() * 5).replace(',', '.') + ")");
@@ -86,7 +85,41 @@ public class BookingActivity extends AppCompatActivity {
 
         btnHitung.setOnClickListener(v -> hitungTotal());
 
-        btnBooking.setOnClickListener(v -> simpanBooking());
+        btnBooking.setOnClickListener(v -> {
+            if (validasiInput()) {
+                showKonfirmasiDialog();
+            }
+        });
+    }
+
+    private boolean validasiInput() {
+        if (etNama.getText().toString().isEmpty()) {
+            etNama.setError("Nama harus diisi");
+            return false;
+        }
+        if (etNik.getText().toString().length() < 16) {
+            etNik.setError("NIK minimal 16 digit");
+            return false;
+        }
+        if (etTanggal.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Pilih tanggal booking", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (etJumlah.getText().toString().isEmpty()) {
+            etJumlah.setError("Jumlah tiket harus diisi");
+            return false;
+        }
+        return true;
+    }
+
+    private void showKonfirmasiDialog() {
+        hitungTotal();
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Konfirmasi Booking")
+                .setMessage("Apakah data yang Anda masukkan sudah benar?\nTotal: " + tvTotal.getText().toString())
+                .setPositiveButton("Ya, Simpan", (dialog, which) -> simpanBooking())
+                .setNegativeButton("Cek Lagi", null)
+                .show();
     }
 
     private void showDatePicker() {
@@ -96,12 +129,13 @@ public class BookingActivity extends AppCompatActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             etTanggal.setText(sdf.format(calendar.getTime()));
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        // Batasi agar tidak bisa pilih tanggal kemarin
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
     private void hitungTotal() {
         if (etJumlah.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Masukkan jumlah tiket", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,21 +153,11 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void simpanBooking() {
-        if (etNama.getText().toString().isEmpty() || etNik.getText().toString().isEmpty() || 
-            etTanggal.getText().toString().isEmpty() || etJumlah.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Harap isi semua form", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (totalBayar == 0) {
-            hitungTotal();
-        }
-
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Menyimpan booking...");
         progressDialog.show();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_INSERT,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ApiConfig.URL_INSERT,
                 response -> {
                     progressDialog.dismiss();
                     Toast.makeText(BookingActivity.this, "Booking Berhasil!", Toast.LENGTH_LONG).show();
@@ -145,7 +169,7 @@ public class BookingActivity extends AppCompatActivity {
                 },
                 error -> {
                     progressDialog.dismiss();
-                    Toast.makeText(BookingActivity.this, "Gagal: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookingActivity.this, "Gagal: Pastikan Server Aktif (" + error.getMessage() + ")", Toast.LENGTH_SHORT).show();
                 }) {
             @Override
             protected Map<String, String> getParams() {

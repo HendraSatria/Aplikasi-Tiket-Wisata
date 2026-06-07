@@ -55,6 +55,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/iv_search_home"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="16dp"
@@ -62,6 +63,7 @@
                     app:tint="@color/white" />
 
                 <ImageView
+                    android:id="@+id/iv_history_home"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_history"
@@ -83,7 +85,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:background="@color/leaf_green">
 
                 <ImageView
                     android:layout_width="40dp"
@@ -108,7 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Dapatkan diskon dengan merawat ekosistem di area pendakian"
-                        android:textColor="@color/nature_green"
+                        android:textColor="@color/nature_green_dark"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -117,6 +120,7 @@
 
         <!-- Greeting -->
         <TextView
+            android:id="@+id/tv_greeting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -178,7 +182,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tiket Masuk"
+                    android:text="Izin Mendaki"
                     android:textSize="11sp"
                     android:layout_marginTop="4dp"
                     android:gravity="center" />
@@ -351,6 +355,7 @@
             android:textStyle="bold" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_promo"
             android:layout_width="match_parent"
             android:layout_height="165dp"
             android:layout_margin="16dp"

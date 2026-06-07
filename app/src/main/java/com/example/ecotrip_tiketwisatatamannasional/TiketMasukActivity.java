@@ -9,6 +9,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+
 import com.example.ecotrip_tiketwisatatamannasional.adapter.WisataAdapter;
 import com.example.ecotrip_tiketwisatatamannasional.model.Wisata;
 
@@ -20,6 +24,7 @@ public class TiketMasukActivity extends AppCompatActivity {
     private RecyclerView rvTiketMasuk;
     private WisataAdapter adapter;
     private List<Wisata> wisataList;
+    private EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,23 +39,37 @@ public class TiketMasukActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> finish());
 
         rvTiketMasuk = findViewById(R.id.rv_tiket_masuk);
+        etSearch = findViewById(R.id.et_search);
 
         wisataList = new ArrayList<>();
-        wisataList.add(new Wisata("Gunung Kawi - Puncak Kawi Najang", "Malang, Jawa Timur", 25000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Bukit Jabal", "Jember, Jawa Timur", 10000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Bukit Lincing", "Pasuruan, Jawa Timur", 15000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Arjuno - Welirang", "Malang/Pasuruan, Jawa Timur", 30000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Bokong", "Pasuruan, Jawa Timur", 10000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Bekel", "Mojokerto, Jawa Timur", 15000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Buthak", "Malang/Blitar, Jawa Timur", 25000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Kelud", "Kediri, Jawa Timur", 20000, android.R.drawable.ic_menu_gallery));
+        // Jawa Timur
+        wisataList.add(new Wisata("Gunung Semeru (Mahameru)", "Lumajang, Jawa Timur", 25000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Bromo (Penanjakan)", "Probolinggo, Jawa Timur", 35000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Arjuno - Welirang", "Pasuruan/Malang", 30000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Buthak (Via Panderman)", "Batu/Malang", 15000, android.R.drawable.ic_menu_gallery));
         wisataList.add(new Wisata("Gunung Penanggungan", "Mojokerto, Jawa Timur", 20000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Puthuk Siwur", "Mojokerto, Jawa Timur", 15000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Gunung Bromo - Tiket Masuk", "Probolinggo, Jawa Timur", 35000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Ranu Kumbolo - Izin Camp 2D1N", "Lumajang, Jawa Timur", 55000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Kawah Ijen - Tiket Masuk", "Banyuwangi, Jawa Timur", 25000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Tumpak Sewu Waterfall", "Lumajang, Jawa Timur", 25000, android.R.drawable.ic_menu_gallery));
-        wisataList.add(new Wisata("Pantai Papuma", "Jember, Jawa Timur", 20000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Raung", "Banyuwangi/Bondowoso", 40000, android.R.drawable.ic_menu_gallery));
+
+        // Jawa Tengah & DIY
+        wisataList.add(new Wisata("Gunung Merapi (Via Selo)", "Boyolali, Jawa Tengah", 25000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Merbabu", "Magelang/Boyolali", 25000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Prau", "Wonosobo, Jawa Tengah", 20000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Lawu", "Karanganyar/Magetan", 20000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Slamet", "Purbalingga, Jawa Tengah", 30000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Sindoro - Sumbing", "Temanggung, Jawa Tengah", 25000, android.R.drawable.ic_menu_gallery));
+
+        // Jawa Barat & Banten
+        wisataList.add(new Wisata("Gunung Gede Pangrango", "Cianjur, Jawa Barat", 35000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Ciremai", "Kuningan, Jawa Barat", 50000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Papandayan", "Garut, Jawa Barat", 30000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Salak", "Bogor/Sukabumi", 25000, android.R.drawable.ic_menu_gallery));
+
+        // Luar Jawa
+        wisataList.add(new Wisata("Gunung Rinjani", "Lombok, NTB", 50000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Kerinci", "Jambi, Sumatera", 40000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Latimojong", "Enrekang, Sulawesi Selatan", 35000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Gunung Binaiya", "Maluku", 50000, android.R.drawable.ic_menu_gallery));
+        wisataList.add(new Wisata("Puncak Jaya Wijaya (Cartenz)", "Papua", 1000000, android.R.drawable.ic_menu_gallery));
 
         adapter = new WisataAdapter(wisataList, this, new WisataAdapter.OnItemClickListener() {
             @Override
@@ -63,5 +82,28 @@ public class TiketMasukActivity extends AppCompatActivity {
 
         rvTiketMasuk.setLayoutManager(new LinearLayoutManager(this));
         rvTiketMasuk.setAdapter(adapter);
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void filter(String text) {
+        List<Wisata> filteredList = new ArrayList<>();
+        for (Wisata item : wisataList) {
+            if (item.getNama().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        adapter.filterList(filteredList);
     }
 }

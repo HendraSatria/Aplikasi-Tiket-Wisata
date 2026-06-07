@@ -56,6 +56,11 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.ViewHolder
         return wisataList.size();
     }
 
+    public void filterList(List<Wisata> filteredList) {
+        this.wisataList = filteredList;
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgWisata;
         TextView tvNama, tvLokasi, tvHarga;

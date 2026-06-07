@@ -37,4 +37,19 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:cornerRadius="8dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="EcoTrip v1.0.0"
+        android:textColor="@color/gray_dark"
+        android:textSize="12sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aplikasi Booking Tiket Wisata Alam"
+        android:textColor="@color/gray_dark"
+        android:textSize="12sp" />
+
 </LinearLayout>

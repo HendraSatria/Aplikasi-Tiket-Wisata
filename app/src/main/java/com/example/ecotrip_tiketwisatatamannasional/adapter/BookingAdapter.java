@@ -55,6 +55,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         return bookingList.size();
     }
 
+    public void updateData(List<Booking> newList) {
+        this.bookingList = newList;
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDestinasi, tvNama, tvTanggal, tvTotal, tvStatus;
         MaterialButton btnEdit, btnDelete;

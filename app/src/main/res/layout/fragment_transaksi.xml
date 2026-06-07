@@ -8,7 +8,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/nature_green" />
+        android:background="@color/nature_green_dark" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,11 +20,49 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_history"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:clipToPadding="false" />
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@color/white"
+        android:hint="Cari Destinasi...">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_search_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false" />
+
+        <LinearLayout
+            android:id="@+id/layout_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Belum ada riwayat pesanan"
+                android:textColor="@color/gray_dark"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
