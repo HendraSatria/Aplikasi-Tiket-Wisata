@@ -18,12 +18,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.ecotrip_tiketwisatatamannasional.MainActivity;
 import com.example.ecotrip_tiketwisatatamannasional.R;
 import com.example.ecotrip_tiketwisatatamannasional.TiketMasukActivity;
+import com.example.ecotrip_tiketwisatatamannasional.adapter.PopularMountainAdapter;
+import com.example.ecotrip_tiketwisatatamannasional.model.Wisata;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -78,7 +81,38 @@ public class HomeFragment extends Fragment {
         // 5. Setup Menu Grid Navigation (Info Dialogs)
         setupMenuNavigation(view);
 
+        // 6. Popular Destinations
+        setupPopularDestinations(view);
+
         return view;
+    }
+
+    private void setupPopularDestinations(View view) {
+        RecyclerView rvPopular = view.findViewById(R.id.rv_popular_destinations);
+        TextView tvSeeAll = view.findViewById(R.id.tv_see_all);
+
+        if (tvSeeAll != null) {
+            tvSeeAll.setOnClickListener(v -> {
+                checkLoginAndNavigate(new Intent(getActivity(), TiketMasukActivity.class));
+            });
+        }
+
+        List<Wisata> popularList = new ArrayList<>();
+        popularList.add(new Wisata("Gunung Bromo", "Probolinggo, Jawa Timur", 35000, R.drawable.bromo));
+        popularList.add(new Wisata("Gunung Semeru", "Lumajang, Jawa Timur", 25000, R.drawable.rakum));
+        popularList.add(new Wisata("Gunung Rinjani", "Lombok, NTB", 50000, R.drawable.rinjani));
+        popularList.add(new Wisata("Gunung Prau", "Wonosobo, Jawa Tengah", 20000, R.drawable.prau));
+
+        PopularMountainAdapter adapter = new PopularMountainAdapter(popularList, wisata -> {
+            Intent intent = new Intent(getActivity(), com.example.ecotrip_tiketwisatatamannasional.BookingActivity.class);
+            intent.putExtra("DATA_WISATA", wisata);
+            checkLoginAndNavigate(intent);
+        });
+
+        if (rvPopular != null) {
+            rvPopular.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+            rvPopular.setAdapter(adapter);
+        }
     }
 
     private void setupBannerSlider(View view) {
