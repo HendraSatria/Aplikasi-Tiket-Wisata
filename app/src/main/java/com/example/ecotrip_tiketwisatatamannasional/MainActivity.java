@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,8 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Set default fragment
         if (savedInstanceState == null) {
-            String target = getIntent().getStringExtra("TARGET_FRAGMENT");
-            if ("TRANSAKSI".equals(target)) {
+            Intent intent = getIntent();
+            String target = intent.getStringExtra("TARGET_FRAGMENT");
+            Uri data = intent.getData();
+            
+            if ("TRANSAKSI".equals(target) || (data != null && "ecotrip".equals(data.getScheme()))) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new TransaksiFragment())
                         .commit();
@@ -86,8 +90,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(android.content.Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        
         String target = intent.getStringExtra("TARGET_FRAGMENT");
-        if ("TRANSAKSI".equals(target)) {
+        Uri data = intent.getData();
+        
+        if ("TRANSAKSI".equals(target) || (data != null && "ecotrip".equals(data.getScheme()))) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new TransaksiFragment())
                     .commit();

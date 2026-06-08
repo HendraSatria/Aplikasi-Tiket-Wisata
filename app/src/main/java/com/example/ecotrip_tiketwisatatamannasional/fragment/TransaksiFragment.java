@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -88,7 +89,45 @@ public class TransaksiFragment extends Fragment {
 
         ambilData();
 
+        // Handle return from payment callback
+        handleIntent();
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        handleIntent();
+    }
+
+    private void handleIntent() {
+        if (getActivity() != null && getActivity().getIntent() != null) {
+            Uri data = getActivity().getIntent().getData();
+            if (data != null && "ecotrip".equals(data.getScheme())) {
+                String id = data.getQueryParameter("id");
+                String status = data.getQueryParameter("status");
+                if ("success".equals(status) && id != null) {
+                    // Reset intent data to prevent multiple triggers
+                    getActivity().getIntent().setData(null);
+                    
+                    // Perintah user: jika pembayaran berhasil maka HAPUS data (abaikan status)
+                    deleteBooking(id);
+                    showSuccessDialog();
+                }
+            }
+        }
+    }
+
+    private void showSuccessDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Pembayaran Berhasil")
+                .setMessage("Terima kasih! Pembayaran Anda telah kami terima.\nTiket elektronik Anda kini telah aktif.")
+                .setPositiveButton("Tutup", (dialog, which) -> {
+                    ambilData();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void ambilData() {
@@ -173,11 +212,6 @@ public class TransaksiFragment extends Fragment {
                 }
 
                 @Override
-                public void onDelete(Booking booking) {
-                    showDeleteConfirmDialog(booking);
-                }
-
-                @Override
                 public void onPay(Booking booking) {
                     startPayment(booking);
                 }
@@ -224,49 +258,13 @@ public class TransaksiFragment extends Fragment {
 
     private void startPayment(Booking booking) {
         currentPayingBooking = booking;
-        String total = String.format(Locale.getDefault(), "%,.0f", booking.getTotalBayar()).replace(',', '.');
-
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(getContext());
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.setPadding(40, 40, 40, 40);
-
-        android.widget.TextView tvInstruction = new android.widget.TextView(getContext());
-        tvInstruction.setText("Silakan transfer ke nomor DANA berikut atau Scan QR Pembayaran:");
-        tvInstruction.setTextColor(android.graphics.Color.BLACK);
-        layout.addView(tvInstruction);
-
-        android.widget.TextView tvNomorDana = new android.widget.TextView(getContext());
-        tvNomorDana.setText("0812-3456-7890");
-        tvNomorDana.setTextSize(24);
-        tvNomorDana.setPadding(0, 20, 0, 20);
-        tvNomorDana.setTextColor(android.graphics.Color.parseColor("#118EEA"));
-        tvNomorDana.setTypeface(null, android.graphics.Typeface.BOLD);
-        tvNomorDana.setGravity(android.view.Gravity.CENTER);
-        layout.addView(tvNomorDana);
-
-        com.google.android.material.button.MaterialButton btnScan = new com.google.android.material.button.MaterialButton(requireContext());
-        btnScan.setText("Scan QR Pembayaran");
-        btnScan.setIcon(androidx.appcompat.content.res.AppCompatResources.getDrawable(requireContext(), android.R.drawable.ic_menu_camera));
-        btnScan.setOnClickListener(v -> {
-            ScanOptions options = new ScanOptions();
-            options.setPrompt("Scan QR Code Pembayaran (GoPay, OVO, DANA, QRIS)");
-            options.setBeepEnabled(true);
-            options.setOrientationLocked(true);
-            options.setCaptureActivity(CustomScannerActivity.class);
-            barcodeLauncher.launch(options);
-        });
-        layout.addView(btnScan);
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Pembayaran Tiket")
-                .setMessage("Lanjutkan pembayaran untuk pendakian " + booking.getDestinasi() + "\nTotal: Rp" + total)
-                .setView(layout)
-                .setPositiveButton("Konfirmasi Transfer", (dialog, which) -> {
-                    Toast.makeText(getContext(), "Bukti transfer akan segera diverifikasi.", Toast.LENGTH_LONG).show();
-                })
-                .setNegativeButton("Batal", null)
-                .setCancelable(true)
-                .show();
+        
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan QR Code Pembayaran (DANA/QRIS)");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CustomScannerActivity.class);
+        barcodeLauncher.launch(options);
     }
 
     private void handlePaymentSuccess(String scanData) {
@@ -279,17 +277,17 @@ public class TransaksiFragment extends Fragment {
             // Simulasi verifikasi otomatis
             new android.os.Handler().postDelayed(() -> {
                 if (loading.isShowing()) loading.dismiss();
-                updatePaymentStatus(currentPayingBooking.getIdBooking(), "Lunas");
                 
-                String total = String.format("%,.0f", currentPayingBooking.getTotalBayar()).replace(',', '.');
+                // Perintah user: jika pembayaran berhasil maka HAPUS data (abaikan status)
+                deleteBooking(currentPayingBooking.getIdBooking());
+                
                 new AlertDialog.Builder(getContext())
                         .setTitle("Pembayaran Berhasil")
-                        .setMessage("Detail Transaksi:\n" +
-                                "ID: " + currentPayingBooking.getIdBooking() + "\n" +
-                                "Nominal: Rp" + total + "\n" +
-                                "Status: Lunas (QRIS)\n\n" +
-                                "E-Ticket Anda kini telah aktif dan dapat diunduh.")
-                        .setPositiveButton("Tutup", (dialog, which) -> ambilData())
+                        .setMessage("Transaksi Anda telah selesai dan berhasil diverifikasi.\nData transaksi telah dihapus dari daftar.")
+                        .setPositiveButton("Tutup", (dialog, which) -> {
+                            // Tutup dialog ini dan refresh data
+                            ambilData();
+                        })
                         .setCancelable(false)
                         .show();
             }, 2000);

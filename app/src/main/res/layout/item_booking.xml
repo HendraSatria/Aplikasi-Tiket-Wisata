@@ -139,25 +139,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:text="Ubah Jadwal"
+                android:text="@string/edit_jadwal"
                 android:textColor="@color/nature_green"
                 android:textSize="12sp"
                 app:icon="@android:drawable/ic_menu_edit"
                 app:iconSize="16dp"
                 app:iconTint="@color/nature_green" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_delete"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:text="Batalkan"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="12sp"
-                app:icon="@android:drawable/ic_menu_delete"
-                app:iconSize="16dp"
-                app:iconTint="@android:color/holo_red_dark" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_pay"
@@ -178,12 +165,12 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:backgroundTint="#1976D2"
-                android:text="E-Ticket"
+                android:text="Lihat Tiket"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:cornerRadius="8dp"
-                app:icon="@android:drawable/stat_sys_download"
+                app:icon="@android:drawable/ic_menu_view"
                 app:iconSize="16dp"
                 app:iconTint="@color/white" />
         </GridLayout>

@@ -99,11 +99,6 @@ public class HistoryActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onDelete(Booking booking) {
-                                showDeleteConfirmDialog(booking);
-                            }
-
-                            @Override
                             public void onPay(Booking booking) {
                                 startPayment(booking);
                             }
@@ -128,21 +123,13 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void startPayment(Booking booking) {
         currentPayingBooking = booking;
-        String total = String.format("%,.0f", booking.getTotalBayar()).replace(',', '.');
         
-        new AlertDialog.Builder(this)
-                .setTitle("Bayar Izin")
-                .setMessage("Lanjutkan pembayaran izin untuk " + booking.getDestinasi() + "\nNominal: Rp" + total)
-                .setPositiveButton("Scan Barcode/QR", (dialog, which) -> {
-                    ScanOptions options = new ScanOptions();
-                    options.setPrompt("Scan Barcode Pembayaran");
-                    options.setBeepEnabled(true);
-                    options.setOrientationLocked(true);
-                    options.setCaptureActivity(CustomScannerActivity.class);
-                    barcodeLauncher.launch(options);
-                })
-                .setNegativeButton("Batal", null)
-                .show();
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan QR Code Pembayaran (DANA/QRIS)");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CustomScannerActivity.class);
+        barcodeLauncher.launch(options);
     }
 
     private void handlePaymentSuccess(String scanData) {
@@ -155,13 +142,16 @@ public class HistoryActivity extends AppCompatActivity {
             // Simulasi verifikasi otomatis dari payment gateway
             new android.os.Handler().postDelayed(() -> {
                 if (loading.isShowing()) loading.dismiss();
-                updatePaymentStatus(currentPayingBooking.getIdBooking(), "Lunas");
+                
+                // Perintah user: jika pembayaran berhasil maka HAPUS data (abaikan status)
+                deleteBooking(currentPayingBooking.getIdBooking());
                 
                 new AlertDialog.Builder(this)
                         .setTitle("Pembayaran Berhasil")
-                        .setMessage("Status transaksi Anda telah diperbarui menjadi Lunas.\n" +
-                                "E-Ticket kini dapat diunduh.")
-                        .setPositiveButton("Lihat Riwayat", (dialog, which) -> ambilData())
+                        .setMessage("Transaksi Anda telah selesai dan berhasil diverifikasi.\nData transaksi telah dihapus dari daftar.")
+                        .setPositiveButton("Tutup", (dialog, which) -> {
+                            ambilData();
+                        })
                         .setCancelable(false)
                         .show();
             }, 2000);

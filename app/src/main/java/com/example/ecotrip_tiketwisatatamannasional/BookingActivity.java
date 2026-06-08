@@ -226,12 +226,8 @@ public class BookingActivity extends AppCompatActivity {
                 .setTitle("Pembayaran Dompet Digital DANA")
                 .setMessage("Pendaftaran Berhasil!\nSegera lakukan transfer untuk memproses izin mendaki Anda.")
                 .setView(layout)
-                .setPositiveButton("Sudah Transfer", (dialog, which) -> {
-                    Toast.makeText(this, "Terima kasih! Pembayaran sedang dalam proses verifikasi.", Toast.LENGTH_LONG).show();
-                    navigateBack();
-                })
-                .setNegativeButton("Bayar Nanti", (dialog, which) -> navigateBack())
-                .setCancelable(true)
+                .setPositiveButton("Tutup", (dialog, which) -> navigateBack())
+                .setCancelable(false)
                 .show();
     }
 

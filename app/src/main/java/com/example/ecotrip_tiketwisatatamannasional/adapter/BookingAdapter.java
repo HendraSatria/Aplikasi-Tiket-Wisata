@@ -24,7 +24,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
 
     public interface OnActionClickListener {
         void onEdit(Booking booking);
-        void onDelete(Booking booking);
         void onPay(Booking booking);
         void onDownload(Booking booking);
     }
@@ -94,7 +93,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         holder.ivThumb.setImageResource(resId);
 
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(booking));
-        holder.btnDelete.setOnClickListener(v -> listener.onDelete(booking));
         holder.btnPay.setOnClickListener(v -> listener.onPay(booking));
         holder.btnDownload.setOnClickListener(v -> listener.onDownload(booking));
         holder.btnDetail.setOnClickListener(v -> showDetailPopup(holder.itemView.getContext(), booking));
@@ -131,7 +129,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDestinasi, tvNama, tvTanggal, tvTotal, tvStatus;
-        MaterialButton btnEdit, btnDelete, btnPay, btnDetail, btnDownload;
+        MaterialButton btnEdit, btnPay, btnDetail, btnDownload;
         ImageView ivThumb;
 
         public ViewHolder(@NonNull View itemView) {
@@ -142,7 +140,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             tvTotal = itemView.findViewById(R.id.tv_total);
             tvStatus = itemView.findViewById(R.id.tv_status);
             btnEdit = itemView.findViewById(R.id.btn_edit);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
             btnPay = itemView.findViewById(R.id.btn_pay);
             btnDetail = itemView.findViewById(R.id.btn_detail);
             btnDownload = itemView.findViewById(R.id.btn_download);
