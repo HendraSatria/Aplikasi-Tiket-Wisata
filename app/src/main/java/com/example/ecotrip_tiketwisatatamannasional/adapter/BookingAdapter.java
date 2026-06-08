@@ -26,6 +26,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         void onEdit(Booking booking);
         void onDelete(Booking booking);
         void onPay(Booking booking);
+        void onDownload(Booking booking);
     }
 
     public BookingAdapter(List<Booking> bookingList, OnActionClickListener listener) {
@@ -47,7 +48,24 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         holder.tvNama.setText("Nama: " + booking.getNamaPemesan());
         holder.tvTanggal.setText("Tanggal: " + booking.getTanggal());
         holder.tvTotal.setText("Total: Rp" + String.format("%,.0f", booking.getTotalBayar()).replace(',', '.'));
-        holder.tvStatus.setText("Status: Terkonfirmasi");
+        
+        String status = booking.getStatusPembayaran();
+        if (status == null || status.isEmpty() || status.equalsIgnoreCase("Belum Bayar")) {
+            holder.tvStatus.setText("Status: Belum Bayar");
+            holder.tvStatus.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_red_dark));
+            holder.btnPay.setVisibility(View.VISIBLE);
+            holder.btnDownload.setVisibility(View.GONE);
+        } else if (status.equalsIgnoreCase("Lunas") || status.equalsIgnoreCase("Pembayaran Berhasil")) {
+            holder.tvStatus.setText("Status: Lunas");
+            holder.tvStatus.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.nature_green));
+            holder.btnPay.setVisibility(View.GONE);
+            holder.btnDownload.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvStatus.setText("Status: " + status);
+            holder.tvStatus.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.nature_green));
+            holder.btnPay.setVisibility(View.GONE);
+            holder.btnDownload.setVisibility(View.GONE);
+        }
 
         // Set Image based on destination name
         String dest = booking.getDestinasi().toLowerCase();
@@ -78,6 +96,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(booking));
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(booking));
         holder.btnPay.setOnClickListener(v -> listener.onPay(booking));
+        holder.btnDownload.setOnClickListener(v -> listener.onDownload(booking));
         holder.btnDetail.setOnClickListener(v -> showDetailPopup(holder.itemView.getContext(), booking));
     }
 
@@ -89,6 +108,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
                 "Basecamp: " + booking.getBasecamp() + "\n\n" +
                 "Fasilitas: " + (booking.getFasilitas().isEmpty() ? "-" : booking.getFasilitas()) + "\n\n" +
                 "Kategori: " + booking.getKategoriTuris() + "\n\n" +
+                "Status: " + (booking.getStatusPembayaran() == null ? "Belum Bayar" : booking.getStatusPembayaran()) + "\n\n" +
                 "Total Biaya: Rp" + String.format("%,.0f", booking.getTotalBayar()).replace(',', '.');
 
         new AlertDialog.Builder(context)
@@ -111,7 +131,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDestinasi, tvNama, tvTanggal, tvTotal, tvStatus;
-        MaterialButton btnEdit, btnDelete, btnPay, btnDetail;
+        MaterialButton btnEdit, btnDelete, btnPay, btnDetail, btnDownload;
         ImageView ivThumb;
 
         public ViewHolder(@NonNull View itemView) {
@@ -125,6 +145,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             btnDelete = itemView.findViewById(R.id.btn_delete);
             btnPay = itemView.findViewById(R.id.btn_pay);
             btnDetail = itemView.findViewById(R.id.btn_detail);
+            btnDownload = itemView.findViewById(R.id.btn_download);
             ivThumb = itemView.findViewById(R.id.iv_destinasi_thumb);
         }
     }

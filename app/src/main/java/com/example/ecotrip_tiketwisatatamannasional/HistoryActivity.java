@@ -88,7 +88,8 @@ public class HistoryActivity extends AppCompatActivity {
                                     obj.getInt("jumlah_tiket"),
                                     obj.getString("fasilitas"),
                                     obj.getDouble("total_bayar"),
-                                    obj.optString("basecamp", "-")
+                                    obj.optString("basecamp", "-"),
+                                    obj.optString("status_pembayaran", "Belum Bayar")
                             ));
                         }
                         adapter = new BookingAdapter(bookingList, new BookingAdapter.OnActionClickListener() {
@@ -105,6 +106,11 @@ public class HistoryActivity extends AppCompatActivity {
                             @Override
                             public void onPay(Booking booking) {
                                 startPayment(booking);
+                            }
+
+                            @Override
+                            public void onDownload(Booking booking) {
+                                downloadTicket(booking);
                             }
                         });
                         rvHistory.setAdapter(adapter);
@@ -141,17 +147,47 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void handlePaymentSuccess(String scanData) {
         if (currentPayingBooking != null) {
-            String total = String.format("%,.0f", currentPayingBooking.getTotalBayar()).replace(',', '.');
-            new AlertDialog.Builder(this)
-                    .setTitle("Konfirmasi Pembayaran")
-                    .setMessage("Scan Berhasil!\nData: " + scanData + "\n\nNominal Rp" + total + " akan dibayarkan.")
-                    .setPositiveButton("Bayar Sekarang", (dialog, which) -> {
-                        Toast.makeText(this, "Pembayaran Berhasil untuk " + currentPayingBooking.getDestinasi(), Toast.LENGTH_LONG).show();
-                        // Di sini bisa ditambahkan update status bayar ke database
-                    })
-                    .setNegativeButton("Batal", null)
-                    .show();
+            ProgressDialog loading = new ProgressDialog(this);
+            loading.setMessage("Memverifikasi pembayaran...");
+            loading.setCancelable(false);
+            loading.show();
+
+            // Simulasi verifikasi otomatis dari payment gateway
+            new android.os.Handler().postDelayed(() -> {
+                if (loading.isShowing()) loading.dismiss();
+                updatePaymentStatus(currentPayingBooking.getIdBooking(), "Lunas");
+                
+                new AlertDialog.Builder(this)
+                        .setTitle("Pembayaran Berhasil")
+                        .setMessage("Status transaksi Anda telah diperbarui menjadi Lunas.\n" +
+                                "E-Ticket kini dapat diunduh.")
+                        .setPositiveButton("Lihat Riwayat", (dialog, which) -> ambilData())
+                        .setCancelable(false)
+                        .show();
+            }, 2000);
         }
+    }
+
+    private void updatePaymentStatus(String id, String status) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_UPDATE,
+                response -> {
+                    // Berhasil update di server
+                },
+                error -> Toast.makeText(this, "Gagal update status server", Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_booking", id);
+                params.put("status_pembayaran", status);
+                return params;
+            }
+        };
+        Volley.newRequestQueue(this).add(stringRequest);
+    }
+
+    private void downloadTicket(Booking booking) {
+        Toast.makeText(this, "Mengunduh E-Ticket untuk " + booking.getDestinasi() + "...", Toast.LENGTH_LONG).show();
+        // Implementasi logika download file PDF tiket di sini
     }
 
     private void showEditDateDialog(Booking booking) {

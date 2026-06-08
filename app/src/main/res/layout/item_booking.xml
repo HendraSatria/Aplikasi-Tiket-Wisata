@@ -170,6 +170,22 @@
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_download"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:backgroundTint="#1976D2"
+                android:text="E-Ticket"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:cornerRadius="8dp"
+                app:icon="@android:drawable/stat_sys_download"
+                app:iconSize="16dp"
+                app:iconTint="@color/white" />
         </GridLayout>
 
     </LinearLayout>

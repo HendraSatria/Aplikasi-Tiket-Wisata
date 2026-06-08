@@ -115,7 +115,8 @@ public class TransaksiFragment extends Fragment {
                                     obj.getInt("jumlah_tiket"),
                                     obj.getString("fasilitas"),
                                     obj.getDouble("total_bayar"),
-                                    obj.optString("basecamp", "-")
+                                    obj.optString("basecamp", "-"),
+                                    obj.optString("status_pembayaran", "Belum Bayar")
                             ));
                         }
                         
@@ -180,6 +181,11 @@ public class TransaksiFragment extends Fragment {
                 public void onPay(Booking booking) {
                     startPayment(booking);
                 }
+
+                @Override
+                public void onDownload(Booking booking) {
+                    Toast.makeText(getContext(), "Mengunduh E-Ticket...", Toast.LENGTH_SHORT).show();
+                }
             });
             rvHistory.setAdapter(adapter);
         }
@@ -225,7 +231,7 @@ public class TransaksiFragment extends Fragment {
         layout.setPadding(40, 40, 40, 40);
 
         android.widget.TextView tvInstruction = new android.widget.TextView(getContext());
-        tvInstruction.setText("Silakan transfer ke nomor DANA berikut:");
+        tvInstruction.setText("Silakan transfer ke nomor DANA berikut atau Scan QR Pembayaran:");
         tvInstruction.setTextColor(android.graphics.Color.BLACK);
         layout.addView(tvInstruction);
 
@@ -238,8 +244,21 @@ public class TransaksiFragment extends Fragment {
         tvNomorDana.setGravity(android.view.Gravity.CENTER);
         layout.addView(tvNomorDana);
 
+        com.google.android.material.button.MaterialButton btnScan = new com.google.android.material.button.MaterialButton(requireContext());
+        btnScan.setText("Scan QR Pembayaran");
+        btnScan.setIcon(androidx.appcompat.content.res.AppCompatResources.getDrawable(requireContext(), android.R.drawable.ic_menu_camera));
+        btnScan.setOnClickListener(v -> {
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Scan QR Code Pembayaran (GoPay, OVO, DANA, QRIS)");
+            options.setBeepEnabled(true);
+            options.setOrientationLocked(true);
+            options.setCaptureActivity(CustomScannerActivity.class);
+            barcodeLauncher.launch(options);
+        });
+        layout.addView(btnScan);
+
         new AlertDialog.Builder(requireContext())
-                .setTitle("Bayar via DANA")
+                .setTitle("Pembayaran Tiket")
                 .setMessage("Lanjutkan pembayaran untuk pendakian " + booking.getDestinasi() + "\nTotal: Rp" + total)
                 .setView(layout)
                 .setPositiveButton("Konfirmasi Transfer", (dialog, which) -> {
@@ -252,17 +271,47 @@ public class TransaksiFragment extends Fragment {
 
     private void handlePaymentSuccess(String scanData) {
         if (currentPayingBooking != null) {
-            String total = String.format("%,.0f", currentPayingBooking.getTotalBayar()).replace(',', '.');
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Konfirmasi Pembayaran")
-                    .setMessage("Scan Berhasil!\nData: " + scanData + "\n\nNominal Rp" + total + " akan dibayarkan.")
-                    .setPositiveButton("Bayar Sekarang", (dialog, which) -> {
-                        Toast.makeText(getContext(), "Pembayaran Berhasil untuk " + currentPayingBooking.getDestinasi(), Toast.LENGTH_LONG).show();
-                        // Di sini bisa ditambahkan update status bayar ke database
-                    })
-                    .setNegativeButton("Batal", null)
-                    .show();
+            ProgressDialog loading = new ProgressDialog(getContext());
+            loading.setMessage("Memverifikasi pembayaran...");
+            loading.setCancelable(false);
+            loading.show();
+
+            // Simulasi verifikasi otomatis
+            new android.os.Handler().postDelayed(() -> {
+                if (loading.isShowing()) loading.dismiss();
+                updatePaymentStatus(currentPayingBooking.getIdBooking(), "Lunas");
+                
+                String total = String.format("%,.0f", currentPayingBooking.getTotalBayar()).replace(',', '.');
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Pembayaran Berhasil")
+                        .setMessage("Detail Transaksi:\n" +
+                                "ID: " + currentPayingBooking.getIdBooking() + "\n" +
+                                "Nominal: Rp" + total + "\n" +
+                                "Status: Lunas (QRIS)\n\n" +
+                                "E-Ticket Anda kini telah aktif dan dapat diunduh.")
+                        .setPositiveButton("Tutup", (dialog, which) -> ambilData())
+                        .setCancelable(false)
+                        .show();
+            }, 2000);
         }
+    }
+
+    private void updatePaymentStatus(String id, String status) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ApiConfig.URL_UPDATE,
+                response -> {
+                    Toast.makeText(getContext(), "Status pembayaran diperbarui", Toast.LENGTH_SHORT).show();
+                    ambilData();
+                },
+                error -> Toast.makeText(getContext(), "Gagal update status: " + error.getMessage(), Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_booking", id);
+                params.put("status_pembayaran", status);
+                return params;
+            }
+        };
+        Volley.newRequestQueue(getContext()).add(stringRequest);
     }
 
     private void showDeleteConfirmDialog(Booking booking) {
