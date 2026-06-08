@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.ecotrip_tiketwisatatamannasional.MainActivity;
 import com.example.ecotrip_tiketwisatatamannasional.R;
 import com.example.ecotrip_tiketwisatatamannasional.SopActivity;
 import com.example.ecotrip_tiketwisatatamannasional.GearActivity;
@@ -56,9 +55,7 @@ public class HomeFragment extends Fragment {
         setupIndicators(view);
 
         // 2. Menu Tiket Masuk
-        view.findViewById(R.id.menu_tiket_masuk).setOnClickListener(v -> {
-            checkLoginAndNavigate(new Intent(getActivity(), TiketMasukActivity.class));
-        });
+        view.findViewById(R.id.menu_tiket_masuk).setOnClickListener(v -> checkLoginAndNavigate(new Intent(getActivity(), TiketMasukActivity.class)));
 
         // 3. Header Icons (Cart & Notifications)
         view.findViewById(R.id.iv_cart_home).setOnClickListener(v -> {
@@ -253,7 +250,7 @@ public class HomeFragment extends Fragment {
 
     // Banner Adapter Class
     private static class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerViewHolder> {
-        private List<BannerItem> bannerItems;
+        private final List<BannerItem> bannerItems;
 
         BannerAdapter(List<BannerItem> bannerItems) {
             this.bannerItems = bannerItems;

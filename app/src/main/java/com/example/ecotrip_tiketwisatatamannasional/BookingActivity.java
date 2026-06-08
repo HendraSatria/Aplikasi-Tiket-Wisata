@@ -158,18 +158,14 @@ public class BookingActivity extends AppCompatActivity {
 
     private void simpanBooking() {
         ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Menyimpan booking...");
+        progressDialog.setMessage("Menyimpan pendaftaran...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ApiConfig.URL_INSERT,
                 response -> {
                     progressDialog.dismiss();
-                    Toast.makeText(BookingActivity.this, "Booking Berhasil!", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(BookingActivity.this, MainActivity.class);
-                    intent.putExtra("TARGET_FRAGMENT", "TRANSAKSI");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                    finish();
+                    showQRISDialog();
                 },
                 error -> {
                     progressDialog.dismiss();
@@ -190,7 +186,7 @@ public class BookingActivity extends AppCompatActivity {
                 if (cbCamping.isChecked()) fasilitas += "Camping, ";
                 if (cbPorter.isChecked()) fasilitas += "Jasa Porter, ";
                 params.put("fasilitas", fasilitas);
-                params.put("basecamp", spinnerPintu.getSelectedItem().toString()); // Added
+                params.put("basecamp", spinnerPintu.getSelectedItem().toString());
                 params.put("total_bayar", String.valueOf(totalBayar));
                 return params;
             }
@@ -198,6 +194,46 @@ public class BookingActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void showQRISDialog() {
+        android.widget.ImageView qrisImage = new android.widget.ImageView(this);
+        qrisImage.setImageResource(R.drawable.promo); // Placeholder QRIS
+        qrisImage.setPadding(32, 32, 32, 32);
+        qrisImage.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+        
+        // Atur tinggi gambar agar tombol tidak terdorong keluar layar
+        android.widget.LinearLayout.LayoutParams imgParams = new android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600);
+        qrisImage.setLayoutParams(imgParams);
+
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.addView(qrisImage);
+
+        // Bungkus dengan ScrollView agar bisa di-scroll jika layar kecil
+        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
+        scrollView.addView(layout);
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Pembayaran QRIS EcoTrip")
+                .setMessage("Pendaftaran Berhasil!\nSilakan scan kode QRIS di bawah ini untuk menyelesaikan pembayaran izin mendaki ke " + wisata.getNama() + ".\n\nTotal Biaya: Rp" + String.format(Locale.getDefault(), "%,.0f", totalBayar).replace(',', '.'))
+                .setView(scrollView)
+                .setPositiveButton("Sudah Bayar", (dialog, which) -> {
+                    Toast.makeText(this, "Terima kasih! Pembayaran akan segera diverifikasi.", Toast.LENGTH_LONG).show();
+                    navigateBack();
+                })
+                .setNegativeButton("Bayar Nanti", (dialog, which) -> navigateBack())
+                .setCancelable(true) // Diubah jadi true agar bisa di-close dengan back
+                .show();
+    }
+
+    private void navigateBack() {
+        Intent intent = new Intent(BookingActivity.this, MainActivity.class);
+        intent.putExtra("TARGET_FRAGMENT", "TRANSAKSI");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private String[] getJalurPendakian(String namaGunung) {

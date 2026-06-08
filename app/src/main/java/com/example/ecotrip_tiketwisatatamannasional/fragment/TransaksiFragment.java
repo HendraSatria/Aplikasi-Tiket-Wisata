@@ -3,7 +3,6 @@ package com.example.ecotrip_tiketwisatatamannasional.fragment;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -49,7 +48,6 @@ public class TransaksiFragment extends Fragment {
     private List<Booking> bookingList;
     private List<Booking> filteredList;
     private View emptyState;
-    private com.google.android.material.textfield.TextInputEditText etSearch;
 
     private Booking currentPayingBooking;
 
@@ -69,7 +67,7 @@ public class TransaksiFragment extends Fragment {
 
         rvHistory = view.findViewById(R.id.rv_history);
         emptyState = view.findViewById(R.id.layout_empty_state); // Pastikan ada di XML
-        etSearch = view.findViewById(R.id.et_search_history);
+        com.google.android.material.textfield.TextInputEditText etSearch = view.findViewById(R.id.et_search_history);
         rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
 
         bookingList = new ArrayList<>();
@@ -105,8 +103,8 @@ public class TransaksiFragment extends Fragment {
                     try {
                         JSONArray array = new JSONArray(response);
                         bookingList.clear();
-                        for (int j = 0; j < array.length(); j++) {
-                            JSONObject obj = array.getJSONObject(j);
+                        for (int k = 0; k < array.length(); k++) {
+                            JSONObject obj = array.getJSONObject(k);
                             bookingList.add(new Booking(
                                     obj.getString("id_booking"),
                                     obj.getString("nama_pemesan"),
@@ -220,20 +218,40 @@ public class TransaksiFragment extends Fragment {
 
     private void startPayment(Booking booking) {
         currentPayingBooking = booking;
-        String total = String.format("%,.0f", booking.getTotalBayar()).replace(',', '.');
+        String total = String.format(Locale.getDefault(), "%,.0f", booking.getTotalBayar()).replace(',', '.');
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Bayar Izin")
-                .setMessage("Lanjutkan pembayaran izin untuk " + booking.getDestinasi() + "\nNominal: Rp" + total)
-                .setPositiveButton("Scan Barcode/QR", (dialog, which) -> {
+        android.widget.ImageView qrisImage = new android.widget.ImageView(getContext());
+        qrisImage.setImageResource(R.drawable.promo); // Placeholder QRIS
+        qrisImage.setPadding(32, 32, 32, 32);
+        qrisImage.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+        
+        // Batasi tinggi gambar
+        android.widget.LinearLayout.LayoutParams imgParams = new android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600);
+        qrisImage.setLayoutParams(imgParams);
+
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(getContext());
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.addView(qrisImage);
+
+        android.widget.ScrollView scrollView = new android.widget.ScrollView(getContext());
+        scrollView.addView(layout);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Pembayaran QRIS")
+                .setMessage("Silakan scan kode QRIS untuk pembayaran pendaftaran ke " + booking.getDestinasi() + "\n\nTotal: Rp" + total)
+                .setView(scrollView)
+                .setPositiveButton("Konfirmasi Bayar", (dialog, which) -> {
                     ScanOptions options = new ScanOptions();
-                    options.setPrompt("Scan Barcode Pembayaran");
+                    options.setPrompt("Scan Barcode Bukti Pembayaran");
                     options.setBeepEnabled(true);
                     options.setOrientationLocked(true);
                     options.setCaptureActivity(CustomScannerActivity.class);
                     barcodeLauncher.launch(options);
                 })
+                .setNeutralButton("Simpan QRIS", (dialog, which) -> Toast.makeText(getContext(), "Gambar QRIS disimpan ke galeri (Simulasi)", Toast.LENGTH_SHORT).show())
                 .setNegativeButton("Batal", null)
+                .setCancelable(true)
                 .show();
     }
 
