@@ -220,36 +220,31 @@ public class TransaksiFragment extends Fragment {
         currentPayingBooking = booking;
         String total = String.format(Locale.getDefault(), "%,.0f", booking.getTotalBayar()).replace(',', '.');
 
-        android.widget.ImageView qrisImage = new android.widget.ImageView(getContext());
-        qrisImage.setImageResource(R.drawable.promo); // Placeholder QRIS
-        qrisImage.setPadding(32, 32, 32, 32);
-        qrisImage.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
-        
-        // Batasi tinggi gambar
-        android.widget.LinearLayout.LayoutParams imgParams = new android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600);
-        qrisImage.setLayoutParams(imgParams);
-
         android.widget.LinearLayout layout = new android.widget.LinearLayout(getContext());
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.addView(qrisImage);
+        layout.setPadding(40, 40, 40, 40);
 
-        android.widget.ScrollView scrollView = new android.widget.ScrollView(getContext());
-        scrollView.addView(layout);
+        android.widget.TextView tvInstruction = new android.widget.TextView(getContext());
+        tvInstruction.setText("Silakan transfer ke nomor DANA berikut:");
+        tvInstruction.setTextColor(android.graphics.Color.BLACK);
+        layout.addView(tvInstruction);
+
+        android.widget.TextView tvNomorDana = new android.widget.TextView(getContext());
+        tvNomorDana.setText("0812-3456-7890");
+        tvNomorDana.setTextSize(24);
+        tvNomorDana.setPadding(0, 20, 0, 20);
+        tvNomorDana.setTextColor(android.graphics.Color.parseColor("#118EEA"));
+        tvNomorDana.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvNomorDana.setGravity(android.view.Gravity.CENTER);
+        layout.addView(tvNomorDana);
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Pembayaran QRIS")
-                .setMessage("Silakan scan kode QRIS untuk pembayaran pendaftaran ke " + booking.getDestinasi() + "\n\nTotal: Rp" + total)
-                .setView(scrollView)
-                .setPositiveButton("Konfirmasi Bayar", (dialog, which) -> {
-                    ScanOptions options = new ScanOptions();
-                    options.setPrompt("Scan Barcode Bukti Pembayaran");
-                    options.setBeepEnabled(true);
-                    options.setOrientationLocked(true);
-                    options.setCaptureActivity(CustomScannerActivity.class);
-                    barcodeLauncher.launch(options);
+                .setTitle("Bayar via DANA")
+                .setMessage("Lanjutkan pembayaran untuk pendakian " + booking.getDestinasi() + "\nTotal: Rp" + total)
+                .setView(layout)
+                .setPositiveButton("Konfirmasi Transfer", (dialog, which) -> {
+                    Toast.makeText(getContext(), "Bukti transfer akan segera diverifikasi.", Toast.LENGTH_LONG).show();
                 })
-                .setNeutralButton("Simpan QRIS", (dialog, which) -> Toast.makeText(getContext(), "Gambar QRIS disimpan ke galeri (Simulasi)", Toast.LENGTH_SHORT).show())
                 .setNegativeButton("Batal", null)
                 .setCancelable(true)
                 .show();

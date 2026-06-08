@@ -165,7 +165,7 @@ public class BookingActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ApiConfig.URL_INSERT,
                 response -> {
                     progressDialog.dismiss();
-                    showQRISDialog();
+                    showDanaPaymentDialog();
                 },
                 error -> {
                     progressDialog.dismiss();
@@ -196,35 +196,42 @@ public class BookingActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void showQRISDialog() {
-        android.widget.ImageView qrisImage = new android.widget.ImageView(this);
-        qrisImage.setImageResource(R.drawable.promo); // Placeholder QRIS
-        qrisImage.setPadding(32, 32, 32, 32);
-        qrisImage.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
-        
-        // Atur tinggi gambar agar tombol tidak terdorong keluar layar
-        android.widget.LinearLayout.LayoutParams imgParams = new android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600);
-        qrisImage.setLayoutParams(imgParams);
-
+    private void showDanaPaymentDialog() {
         android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.addView(qrisImage);
+        layout.setPadding(40, 40, 40, 40);
 
-        // Bungkus dengan ScrollView agar bisa di-scroll jika layar kecil
-        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
-        scrollView.addView(layout);
+        android.widget.TextView tvInstruction = new android.widget.TextView(this);
+        tvInstruction.setText("Silakan transfer ke nomor DANA berikut:");
+        tvInstruction.setTextSize(16);
+        tvInstruction.setTextColor(android.graphics.Color.BLACK);
+        layout.addView(tvInstruction);
+
+        android.widget.TextView tvNomorDana = new android.widget.TextView(this);
+        tvNomorDana.setText("0812-3456-7890"); // Ganti dengan nomor DANA Anda
+        tvNomorDana.setTextSize(24);
+        tvNomorDana.setPadding(0, 20, 0, 20);
+        tvNomorDana.setTextColor(android.graphics.Color.parseColor("#118EEA")); // Warna Biru DANA
+        tvNomorDana.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvNomorDana.setGravity(android.view.Gravity.CENTER);
+        layout.addView(tvNomorDana);
+
+        android.widget.TextView tvTotal = new android.widget.TextView(this);
+        tvTotal.setText("Total yang harus dibayar: Rp" + String.format(Locale.getDefault(), "%,.0f", totalBayar).replace(',', '.'));
+        tvTotal.setTextSize(16);
+        tvTotal.setTextColor(android.graphics.Color.BLACK);
+        layout.addView(tvTotal);
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Pembayaran QRIS EcoTrip")
-                .setMessage("Pendaftaran Berhasil!\nSilakan scan kode QRIS di bawah ini untuk menyelesaikan pembayaran izin mendaki ke " + wisata.getNama() + ".\n\nTotal Biaya: Rp" + String.format(Locale.getDefault(), "%,.0f", totalBayar).replace(',', '.'))
-                .setView(scrollView)
-                .setPositiveButton("Sudah Bayar", (dialog, which) -> {
-                    Toast.makeText(this, "Terima kasih! Pembayaran akan segera diverifikasi.", Toast.LENGTH_LONG).show();
+                .setTitle("Pembayaran Dompet Digital DANA")
+                .setMessage("Pendaftaran Berhasil!\nSegera lakukan transfer untuk memproses izin mendaki Anda.")
+                .setView(layout)
+                .setPositiveButton("Sudah Transfer", (dialog, which) -> {
+                    Toast.makeText(this, "Terima kasih! Pembayaran sedang dalam proses verifikasi.", Toast.LENGTH_LONG).show();
                     navigateBack();
                 })
                 .setNegativeButton("Bayar Nanti", (dialog, which) -> navigateBack())
-                .setCancelable(true) // Diubah jadi true agar bisa di-close dengan back
+                .setCancelable(true)
                 .show();
     }
 
