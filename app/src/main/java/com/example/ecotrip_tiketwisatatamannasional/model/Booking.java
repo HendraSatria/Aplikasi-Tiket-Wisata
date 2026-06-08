@@ -33,7 +33,6 @@ public class Booking {
     public String getKategoriTuris() { return kategoriTuris; }
     public int getJumlahTiket() { return jumlahTiket; }
     public String getFasilitas() { return fasilitas; }
-    public double totalBayar() { return totalBayar; } // keeping original name or getter
     public double getTotalBayar() { return totalBayar; }
     public String getBasecamp() { return basecamp; }
 }
