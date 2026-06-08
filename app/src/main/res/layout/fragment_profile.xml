@@ -152,13 +152,6 @@
                         android:layout_toEndOf="@id/icon1"
                         android:text="Ubah Profil"
                         android:textColor="#333333" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginStart="60dp"/>
 
@@ -185,13 +178,6 @@
                         android:layout_toEndOf="@id/icon2"
                         android:text="Tautkan Akun"
                         android:textColor="#333333" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginStart="60dp"/>
 
@@ -218,13 +204,6 @@
                         android:layout_toEndOf="@id/icon3"
                         android:text="Kata Sandi"
                         android:textColor="#333333" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginStart="60dp"/>
 
@@ -251,13 +230,6 @@
                         android:layout_toEndOf="@id/icon4"
                         android:text="Riwayat Pendakian"
                         android:textColor="#333333" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginStart="60dp"/>
 
@@ -290,19 +262,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        android:layout_toStartOf="@id/iv_arrow_lang"
+                        android:layout_alignParentEnd="true"
                         android:text="Indonesia"
                         android:textColor="@color/gray_dark"
                         android:textSize="12sp" />
-                    <ImageView
-                        android:id="@+id/iv_arrow_lang"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -354,13 +317,6 @@
                         android:layout_toEndOf="@id/icon5"
                         android:text="Tentang Tiket Pendakian"
                         android:textColor="#333333" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginStart="60dp"/>
 
@@ -386,13 +342,6 @@
                         android:layout_toEndOf="@id/icon6"
                         android:text="Kebijakan Privasi"
                         android:textColor="#333333" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@android:drawable/ic_media_next"
-                        app:tint="@color/gray_dark" />
                 </RelativeLayout>
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginStart="60dp"/>
 

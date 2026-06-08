@@ -22,6 +22,7 @@ import com.example.ecotrip_tiketwisatatamannasional.SplashActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
@@ -94,13 +95,85 @@ public class ProfileFragment extends Fragment {
         // Click listeners for menus
         view.findViewById(R.id.menu_edit_profile).setOnClickListener(v -> {
             if (isUserLoggedIn()) {
-                Toast.makeText(getContext(), "Fitur Ubah Profil akan segera hadir", Toast.LENGTH_SHORT).show();
+                showEditProfileDialog();
             } else {
                 startActivity(new Intent(getActivity(), LoginActivity.class));
             }
         });
 
+        // Add Terms & Conditions Listener
+        // Assuming the last relative layout in section 2 is Syarat dan Ketentuan
+        // Looking at fragment_profile.xml, it's the 3rd RelativeLayout in section 2
+        ViewGroup section2 = (ViewGroup) view.findViewById(R.id.btn_logout).getParent();
+        // Index search based on XML structure:
+        // Section 2 Header is at some index, then a CardView.
+        // We need to find the specific layout. Let's find by looking for the one with specific icons or text if possible.
+        // Or we can find all RelativeLayouts and pick the one with "Syarat dan Ketentuan" text.
+        setupProfileMenuActions(view);
+
         return view;
+    }
+
+    private void setupProfileMenuActions(View view) {
+        // Find Syarat dan Ketentuan menu by searching for text
+        findMenuAndSetAction(view, "Syarat dan Ketentuan", v -> showTermsDialog());
+        findMenuAndSetAction(view, "Tentang Tiket", v -> showAboutDialog());
+        findMenuAndSetAction(view, "Kebijakan Privasi", v -> showPrivacyDialog());
+        findMenuAndSetAction(view, "Riwayat Pendakian", v -> {
+            if (getActivity() != null) {
+                com.google.android.material.bottomnavigation.BottomNavigationView bnv = getActivity().findViewById(R.id.bottom_navigation);
+                if (bnv != null) bnv.setSelectedItemId(R.id.nav_transaksi);
+            }
+        });
+    }
+
+    private void findMenuAndSetAction(View root, String textPart, View.OnClickListener listener) {
+        ArrayList<View> outViews = new ArrayList<>();
+        root.findViewsWithText(outViews, textPart, View.FIND_VIEWS_WITH_TEXT);
+        for (View v : outViews) {
+            if (v instanceof TextView) {
+                View parent = (View) v.getParent();
+                if (parent instanceof android.widget.RelativeLayout) {
+                    parent.setOnClickListener(listener);
+                }
+            }
+        }
+    }
+
+    private void showEditProfileDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Ubah Profil")
+                .setMessage("Fitur untuk mengubah foto profil, nomor HP, dan alamat akan tersedia pada update versi 2.0.")
+                .setPositiveButton("Mengerti", null)
+                .show();
+    }
+
+    private void showTermsDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Syarat & Ketentuan EcoTrip")
+                .setMessage("1. Calon pendaki wajib membawa identitas asli (KTP/Paspor).\n\n" +
+                        "2. Dilarang keras membawa senjata tajam (kecuali untuk keperluan masak), miras, dan narkoba.\n\n" +
+                        "3. Wajib membawa kembali sampah turun. Pelanggaran dikenakan denda Eco-Point atau administratif.\n\n" +
+                        "4. Pembatalan (Refund) hanya dilayani H-3 dengan potongan biaya administrasi 25%.\n\n" +
+                        "5. Kondisi fisik harus sehat. Surat keterangan sehat dari dokter wajib dibawa saat check-in di basecamp.")
+                .setPositiveButton("Saya Setuju", null)
+                .show();
+    }
+
+    private void showAboutDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Tentang Tiket Pendakian")
+                .setMessage("EcoTrip adalah sistem perizinan pendakian (SIMAKSI) digital resmi yang bekerja sama dengan berbagai Balai Taman Nasional di Indonesia. Tujuan kami adalah mempermudah pendaftaran serta menjaga kelestarian alam melalui sistem Eco-Point.")
+                .setPositiveButton("Tutup", null)
+                .show();
+    }
+
+    private void showPrivacyDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Kebijakan Privasi")
+                .setMessage("Data pribadi Anda (Nama, NIK, No HP) digunakan secara eksklusif untuk kepentingan verifikasi di pos pendakian dan tim SAR jika terjadi keadaan darurat. Kami tidak membagikan data Anda kepada pihak ketiga untuk tujuan iklan.")
+                .setPositiveButton("Mengerti", null)
+                .show();
     }
 
     private void updateLanguageDisplay() {

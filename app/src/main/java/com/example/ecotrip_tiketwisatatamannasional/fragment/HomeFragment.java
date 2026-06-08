@@ -24,8 +24,12 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.ecotrip_tiketwisatatamannasional.MainActivity;
 import com.example.ecotrip_tiketwisatatamannasional.R;
+import com.example.ecotrip_tiketwisatatamannasional.SopActivity;
+import com.example.ecotrip_tiketwisatatamannasional.GearActivity;
 import com.example.ecotrip_tiketwisatatamannasional.TiketMasukActivity;
+import com.example.ecotrip_tiketwisatatamannasional.adapter.MountainStatusAdapter;
 import com.example.ecotrip_tiketwisatatamannasional.adapter.PopularMountainAdapter;
+import com.example.ecotrip_tiketwisatatamannasional.model.MountainStatus;
 import com.example.ecotrip_tiketwisatatamannasional.model.Wisata;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -59,7 +63,7 @@ public class HomeFragment extends Fragment {
         // 3. Header Icons (Cart & Notifications)
         view.findViewById(R.id.iv_cart_home).setOnClickListener(v -> {
             if (isUserLoggedIn()) {
-                showInfoDialog("Keranjang Belanja", "Fitur keranjang belanja akan segera hadir.");
+                showCartDialog();
             } else {
                 startActivity(new Intent(getActivity(), com.example.ecotrip_tiketwisatatamannasional.LoginActivity.class));
             }
@@ -67,7 +71,7 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.iv_notification_home).setOnClickListener(v -> {
             if (isUserLoggedIn()) {
-                showInfoDialog("Notifikasi", "Belum ada notifikasi baru.");
+                showNotificationDialog();
             } else {
                 startActivity(new Intent(getActivity(), com.example.ecotrip_tiketwisatatamannasional.LoginActivity.class));
             }
@@ -84,7 +88,38 @@ public class HomeFragment extends Fragment {
         // 6. Popular Destinations
         setupPopularDestinations(view);
 
+        // 7. Mountain Status
+        setupMountainStatus(view);
+
         return view;
+    }
+
+    private void setupMountainStatus(View view) {
+        RecyclerView rvStatus = view.findViewById(R.id.rv_mountain_status);
+        if (rvStatus == null) return;
+
+        List<MountainStatus> statusList = new ArrayList<>();
+        statusList.add(new MountainStatus("Bromo", "Level II (Waspada)", "Cerah", "12°C", android.graphics.Color.parseColor("#FFC107")));
+        statusList.add(new MountainStatus("Semeru", "Level III (Siaga)", "Berawan", "8°C", android.graphics.Color.RED));
+        statusList.add(new MountainStatus("Slamet", "Level II (Waspada)", "Hujan Ringan", "10°C", android.graphics.Color.parseColor("#FFC107")));
+        statusList.add(new MountainStatus("Prau", "Level I (Normal)", "Cerah", "14°C", android.graphics.Color.parseColor("#4CAF50")));
+        statusList.add(new MountainStatus("Merbabu", "Level I (Normal)", "Cerah Berawan", "13°C", android.graphics.Color.parseColor("#4CAF50")));
+        statusList.add(new MountainStatus("Lawu", "Level I (Normal)", "Cerah Berawan", "11°C", android.graphics.Color.parseColor("#4CAF50")));
+        statusList.add(new MountainStatus("Ijen", "Level I (Normal)", "Cerah", "16°C", android.graphics.Color.parseColor("#4CAF50")));
+        statusList.add(new MountainStatus("Raung", "Level II (Waspada)", "Mendung", "12°C", android.graphics.Color.parseColor("#FFC107")));
+        statusList.add(new MountainStatus("Argopuro", "Level I (Normal)", "Hujan Sedang", "15°C", android.graphics.Color.parseColor("#4CAF50")));
+        statusList.add(new MountainStatus("Arjuno", "Level I (Normal)", "Cerah", "14°C", android.graphics.Color.parseColor("#4CAF50")));
+
+        MountainStatusAdapter adapter = new MountainStatusAdapter(statusList);
+        rvStatus.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvStatus.setAdapter(adapter);
+
+        View tvSeeAllStatus = view.findViewById(R.id.tv_see_all_status);
+        if (tvSeeAllStatus != null) {
+            tvSeeAllStatus.setOnClickListener(v -> {
+                showInfoDialog("Status Gunung Lengkap", "Menampilkan seluruh status aktivitas vulkanik, prakiraan cuaca, dan estimasi suhu di Taman Nasional.");
+            });
+        }
     }
 
     private void setupPopularDestinations(View view) {
@@ -299,6 +334,20 @@ public class HomeFragment extends Fragment {
             final int currentIndex = indexMenu;
             
             if (menu.getId() == R.id.menu_tiket_masuk) continue;
+            
+            if (menu.getId() == R.id.menu_sop) {
+                menu.setOnClickListener(v -> {
+                    startActivity(new Intent(getActivity(), SopActivity.class));
+                });
+                continue;
+            }
+
+            if (menu.getId() == R.id.menu_gear) {
+                menu.setOnClickListener(v -> {
+                    startActivity(new Intent(getActivity(), GearActivity.class));
+                });
+                continue;
+            }
 
             menu.setOnClickListener(v -> {
                 if (!isUserLoggedIn()) {
@@ -315,6 +364,9 @@ public class HomeFragment extends Fragment {
                     case 3: // Sewa Alat
                         showInfoDialog("Sewa Alat", "Tersedia penyewaan Tenda, Carrier, Sleeping Bag, dan Nesting di setiap basecamp pendakian.");
                         break;
+                    case 4: // Event
+                        showEventDialog();
+                        break;
                     case 5: // Camping
                         showInfoDialog("Info Camping", "Gunakan area yang telah ditentukan (Camping Ground). Jangan mendirikan tenda di jalur pendakian.");
                         break;
@@ -324,6 +376,51 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void showCartDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Keranjang Izin Pendakian")
+                .setMessage("1. Izin Gunung Lawu (Via Cetho)\n   Tanggal: 25 Juni 2024\n   Status: Menunggu Pembayaran\n\nTotal Tagihan: Rp 20.000\n\nSilakan selesaikan pembayaran di menu Transaksi.")
+                .setPositiveButton("Ke Transaksi", (dialog, which) -> {
+                    if (getActivity() != null) {
+                        BottomNavigationView bnv = getActivity().findViewById(R.id.bottom_navigation);
+                        if (bnv != null) {
+                            bnv.setSelectedItemId(R.id.nav_transaksi);
+                        }
+                    }
+                })
+                .setNegativeButton("Tutup", null)
+                .show();
+    }
+
+    private void showNotificationDialog() {
+        String[] notifications = {
+                "⚠️ Jalur Merbabu via Selo ditutup sementara karena cuaca buruk.",
+                "✅ Pembayaran Izin Bromo Anda telah dikonfirmasi.",
+                "🔥 Promo 10% untuk pendakian Rinjani bulan depan!",
+                "🌱 Eco-Point Anda bertambah +50 dari aksi bersih gunung."
+        };
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Notifikasi Terbaru")
+                .setItems(notifications, null)
+                .setPositiveButton("Tandai Dibaca", null)
+                .show();
+    }
+
+    private void showEventDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Event & Promo EcoTrip")
+                .setMessage("📅 Upcoming Events:\n\n" +
+                        "1. Merbabu Clean Up (20-21 Juni)\n   Dapatkan 200 Eco-Points!\n\n" +
+                        "2. Festival Semeru (17 Agustus)\n   Upacara bersama di Kalimati.\n\n" +
+                        "3. Promo Hari Bumi\n   Diskon 20% untuk semua jalur di Jawa Tengah.")
+                .setPositiveButton("Ikuti Event", (dialog, which) -> {
+                    Toast.makeText(getContext(), "Pendaftaran event akan dibuka segera!", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Tutup", null)
+                .show();
     }
 
     private void showInfoDialog(String title, String message) {

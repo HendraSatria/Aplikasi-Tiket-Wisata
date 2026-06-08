@@ -78,8 +78,8 @@ public class BookingActivity extends AppCompatActivity {
             rbMancanegara.setText("Mancanegara (Rp" + String.format("%,d", wisata.getHarga() * 5).replace(',', '.') + ")");
         }
 
-        // Setup Spinner
-        String[] pintuMasuk = {"Pintu Utama", "Jalur Pendakian A", "Jalur Pendakian B"};
+        // Setup Spinner based on Selected Mountain
+        String[] pintuMasuk = getJalurPendakian(wisata != null ? wisata.getNama() : "");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, pintuMasuk);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPintu.setAdapter(adapter);
@@ -198,5 +198,59 @@ public class BookingActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private String[] getJalurPendakian(String namaGunung) {
+        if (namaGunung == null) return new String[]{"Pintu Utama"};
+        
+        String name = namaGunung.toLowerCase();
+        
+        if (name.contains("kelud")) {
+            return new String[]{"Via Ngantang", "Via Karangrejo", "Via Tulungrejo", "Kediri (Wisata)"};
+        } else if (name.contains("batutulis")) {
+            return new String[]{"Via Precet Wagir (Jalur Tercepat)", "Via Keraton ", "Via Kucur Dau", "Via Panderman", "Via Ngantang ", "Via Mrinci Batu"};
+        } else if (name.contains("kawinajang")) {
+            return new String[]{"Via Ngantang", "Via Bendosari", "Via Tulungrejo", "Via Sebaluh", "Via Sumberpitu"};
+        } else if (name.contains("bromo")) {
+            return new String[]{"Via Cemorolawang", "Via Wonokitri", "Via Ngadas", "Via Tosari"};
+        } else if (name.contains("semeru")) {
+            return new String[]{"Via Ranupane"};
+        } else if (name.contains("arjuno") || name.contains("welirang")) {
+            return new String[]{"Via Tretes", "Via Lawang", "Via Purwosari", "Via Sumber Brantas (Batu)"};
+        } else if (name.contains("merbabu")) {
+            return new String[]{"Via Selo", "Via Suwanting", "Via Wekas", "Via Cunthel", "Via Thekelan"};
+        } else if (name.contains("merapi")) {
+            return new String[]{"Via Selo", "Via Sapuangin"};
+        } else if (name.contains("prau")) {
+            return new String[]{"Via Patakbanteng", "Via Kalilembu", "Via Dieng", "Via Dwarawati", "Via Igirmranak"};
+        } else if (name.contains("lawu")) {
+            return new String[]{"Via Cemoro Sewu", "Via Cemoro Kandang", "Via Candi Cetho", "Via Singolangu"};
+        } else if (name.contains("slamet")) {
+            return new String[]{"Via Bambangan", "Via Guci", "Via Dipajaya", "Via Baturraden"};
+        } else if (name.contains("sindoro")) {
+            return new String[]{"Via Kledung", "Via Alang-alang Sewu", "Via Bansari", "Via Ndoro Arum"};
+        } else if (name.contains("sumbing")) {
+            return new String[]{"Via Garung", "Via Bowongso", "Via Sipetung", "Via Mangli"};
+        } else if (name.contains("rinjani")) {
+            return new String[]{"Via Senaru", "Via Sembalun", "Via Aik Berik", "Via Timbanuh"};
+        } else if (name.contains("kerinci")) {
+            return new String[]{"Via Kersik Tuo"};
+        } else if (name.contains("ciremai")) {
+            return new String[]{"Via Linggarjati", "Via Palutungan", "Via Apuy", "Via Cisantana"};
+        } else if (name.contains("papandayan")) {
+            return new String[]{"Via Cisurupan"};
+        } else if (name.contains("penanggungan")) {
+            return new String[]{"Via Tamiajeng", "Via Jolotundo", "Via Trawas", "Via Kunjorowesi"};
+        } else if (name.contains("buthak")) {
+            return new String[]{"Via Panderman (Batu)", "Via Sirah Kencong (Blitar)"};
+        } else if (name.contains("wilis")) {
+            return new String[]{"Via Bajulan (Nganjuk)", "Via Mojo (Kediri)", "Via Kare (Madiun)"};
+        } else if (name.contains("raung")) {
+            return new String[]{"Via Kalibaru", "Via Sumberwringin"};
+        } else if (name.contains("jaya wijaya")) {
+            return new String[]{"Via Ugimba", "Via Sugapa"};
+        }
+        
+        return new String[]{"Pintu Utama", "Jalur Umum"};
     }
 }

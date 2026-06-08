@@ -255,8 +255,9 @@
                             android:gravity="center" />
                     </LinearLayout>
 
-                    <!-- Item 4: Sewa Alat -->
+                    <!-- Item 4: Alat Wajib Bawa -->
                     <LinearLayout
+                        android:id="@+id/menu_gear"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -274,7 +275,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sewa Alat"
+                            android:text="Alat Wajib Bawa"
                             android:textSize="11sp"
                             android:layout_marginTop="6dp"
                             android:textColor="#444444"
@@ -361,6 +362,7 @@
 
                     <!-- Item 8: Syarat & Ketentuan -->
                     <LinearLayout
+                        android:id="@+id/menu_sop"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -412,6 +414,52 @@
                 android:src="@drawable/promo"
                 android:alpha="0.8" />
         </androidx.cardview.widget.CardView>
+
+        <!-- Mountain Status Section -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/tv_see_all_status"
+                android:text="Status Gunung"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_see_all_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="@string/lihat_semua"
+                android:textColor="@color/nature_green"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="4dp" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_mountain_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <!-- Popular Destinations Section -->
         <RelativeLayout
